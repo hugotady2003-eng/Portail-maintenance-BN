@@ -112,6 +112,12 @@
   .user-dot{width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px #1a73e8,0 1px 4px rgba(0,0,0,.4);animation:userpulse 1.8s ease-out infinite;}
   @keyframes userpulse{0%{box-shadow:0 0 0 0 rgba(26,115,232,.5),0 0 0 2px #1a73e8}70%{box-shadow:0 0 0 14px rgba(26,115,232,0),0 0 0 2px #1a73e8}100%{box-shadow:0 0 0 0 rgba(26,115,232,0),0 0 0 2px #1a73e8}}
   .locate-btn.tracking{background:#0b8043;}
+  .edit-btn{position:relative;z-index:5;display:block;width:calc(100% - 32px);margin:0 16px 10px;padding:11px;background:var(--blanc);color:var(--bleu);border:1.5px solid var(--bleu);border-radius:9px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+  .edit-btn.on{background:#0b8043;border-color:#0b8043;color:#fff;}
+  .edit-hint{margin:0 16px 12px;padding:10px 12px;background:#fff8e6;border:1px solid #f3e2a8;border-radius:9px;font-size:12.5px;color:#6b5a1e;line-height:1.45;}
+  .pop-del{background:#e53935;color:#fff;border:none;border-radius:7px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;width:100%;}
+  .pop-tag{font-size:10px;background:#e3f2fd;color:#1565c0;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;}
+  .supa-banner{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;background:#b71c1c;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:90%;text-align:center;display:none;}
   .leaflet-map{width:100%;height:340px;border-bottom:1px solid var(--gris-bord);background:#e8edf0;z-index:1;}
   .sub-toggle{display:flex;gap:8px;padding:12px 16px;background:var(--gris-bg);border-bottom:1px solid var(--gris-bord);}
   .sub-btn{flex:1;border:1px solid var(--gris-bord);background:var(--blanc);color:var(--texte2);font-family:inherit;font-size:13px;font-weight:700;padding:10px;border-radius:9px;cursor:pointer;transition:all .15s;}
@@ -197,6 +203,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app">
@@ -295,6 +302,8 @@
     <!-- Carte interactive (Leaflet + OpenStreetMap) -->
     <div id="accMap" class="leaflet-map"></div>
     <button id="locateBtn" class="locate-btn" onclick="locateMe()" title="Ma position">📍 Activer ma position</button>
+    <button id="editBtn" class="edit-btn" onclick="toggleEdit()">✏️ Modifier les points</button>
+    <div id="editHint" class="edit-hint" style="display:none;">Mode édition : touchez la carte pour <b>ajouter</b> un point, ou ouvrez un point ajouté puis <b>Supprimer</b>. Les modifications sont partagées avec tous.</div>
     <!-- Légende des particularités locales -->
     <div id="accLegend" class="acc-legend" style="display:none;"></div>
 
@@ -353,6 +362,33 @@
 </div>
 
 <script>
+  // ================== CONFIG SUPABASE ==================
+  // Remplacez ces 3 valeurs (voir SUPABASE_SETUP.md)
+  const SUPA_URL  = "VOTRE_URL_ICI";
+  const SUPA_KEY  = "VOTRE_CLE_ANON_ICI";
+  const EDIT_CODE = "366000";   // code d'accès pour modifier — À CHANGER
+  // ====================================================
+
+  let supa = null, supaOk = false;
+  try {
+    if (SUPA_URL && SUPA_URL.indexOf('http')===0 && window.supabase) {
+      supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      supaOk = true;
+    }
+  } catch(e){ supaOk=false; }
+
+  // Affiche un bandeau d'erreur si la base est injoignable
+  function supaDown(msg){
+    let b=document.getElementById('supaBanner');
+    if(!b){
+      b=document.createElement('div'); b.id='supaBanner'; b.className='supa-banner';
+      document.body.appendChild(b);
+    }
+    b.textContent='⚠️ '+(msg||"Service de sauvegarde indisponible, réessayez plus tard.");
+    b.style.display='block';
+    clearTimeout(b._t); b._t=setTimeout(()=>{b.style.display='none';}, 6000);
+  }
+
   const domains=[
     {e:'🔊',n:'Sonorisation'},
     {e:'🔀',n:'Commutation'},
@@ -562,6 +598,7 @@
       maxZoom:19, attribution:'© OpenStreetMap'
     }).addTo(leafletMap);
     markerLayer = L.layerGroup().addTo(leafletMap);
+    leafletMap.on('click', onMapClickAdd);
   }
 
   // Icône SVG personnalisée (pas d'image externe → toujours visible)
@@ -574,10 +611,21 @@
   function popupHtml(p){
     const waze='https://waze.com/ul?ll='+p.lat+','+p.lng+'&navigate=yes';
     const gmaps='https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng;
-    return '<div class="pop-name">'+p.n+'</div>'+
+    let del='';
+    if(editMode && p._sid){
+      del='<div style="margin-top:8px"><button class="pop-btn pop-del" onclick="removeUserPoint(\''+p._sid+'\',\''+(p.n||'').replace(/\'/g,"")+'\')">🗑️ Supprimer ce point</button></div>';
+    }
+    return '<div class="pop-name">'+p.n+(p._user?' <span class="pop-tag">ajouté</span>':'')+'</div>'+
            '<div style="font-size:11px;color:#5a6571;margin-bottom:8px;">'+p.lat.toFixed(5)+', '+p.lng.toFixed(5)+'</div>'+
            '<div class="pop-btns"><a class="pop-btn pop-waze" href="'+waze+'" target="_blank">▶ Waze</a>'+
-           '<a class="pop-btn pop-gmaps" href="'+gmaps+'" target="_blank">▶ Maps</a></div>';
+           '<a class="pop-btn pop-gmaps" href="'+gmaps+'" target="_blank">▶ Maps</a></div>'+del;
+  }
+  function removeUserPoint(sid, nom){
+    if(!confirm('Supprimer « '+nom+' » ? Cette action est partagée avec tous.')) return;
+    const auteur = localStorage.getItem('bn_auteur') || promptAuteur();
+    deletePoint(sid, currentCat.id, currentLine.id, nom, auteur).then(ok=>{
+      if(ok){ leafletMap.closePopup(); const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes; selectLine(currentLine.id, lignes); }
+    });
   }
 
   // Extrait le numéro de PN d'un libellé (ex. "PN 35", "PN 81-2", "PN 83 ter")
@@ -735,18 +783,18 @@
   }
   function clearSegments(){ if(segmentLayer){ try{leafletMap.removeLayer(segmentLayer);}catch(e){} segmentLayer=null; } }
 
-  // Échelle de couleur pour la vitesse (km/h)
+  // Échelle de couleur pour la vitesse (km/h) — froid = lent, chaud/rouge = rapide
   function speedColor(v){
     v=parseInt(v,10);
     if(isNaN(v)) return '#9aa0b5';
-    if(v<=40) return '#7b1fa2';
-    if(v<=60) return '#c2185b';
-    if(v<=90) return '#e53935';
-    if(v<=110) return '#fb8c00';
-    if(v<=130) return '#fdd835';
-    if(v<=150) return '#7cb342';
-    if(v<=160) return '#26a69a';
-    return '#1e88e5'; // > 160
+    if(v<=80)  return '#1565c0';  // bleu foncé
+    if(v<=100) return '#42a5f5';  // bleu clair
+    if(v<=120) return '#26a69a';  // turquoise
+    if(v<=130) return '#66bb6a';  // vert
+    if(v<=140) return '#cddc39';  // vert-jaune
+    if(v<=150) return '#ffca28';  // jaune
+    if(v<=160) return '#fb8c00';  // orange
+    return '#e53935';             // rouge = 200 (le plus rapide)
   }
   // Style par régime d'exploitation
   const regimeStyle = {
@@ -813,8 +861,8 @@
     const el=document.getElementById('accLegend');
     let html='';
     if(localMode==='vitesse'){
-      const items=[['≤ 40','#7b1fa2'],['41–60','#c2185b'],['61–90','#e53935'],['91–110','#fb8c00'],
-        ['111–130','#fdd835'],['131–150','#7cb342'],['151–160','#26a69a'],['> 160','#1e88e5']];
+      const items=[['≤ 80','#1565c0'],['81–100','#42a5f5'],['101–120','#26a69a'],['121–130','#66bb6a'],
+        ['131–140','#cddc39'],['141–150','#ffca28'],['151–160','#fb8c00'],['200','#e53935']];
       html='<div class="leg-title">Vitesse max (km/h)</div><div class="leg-row">'+
         items.map(i=>'<span class="leg-item"><span class="leg-line" style="background:'+i[1]+'"></span>'+i[0]+'</span>').join('')+'</div>';
     } else {
@@ -1031,6 +1079,139 @@
     }).join('');
   }
 
+  // ============ ÉDITION COLLABORATIVE (Supabase) ============
+  // Points ajoutés par les utilisateurs, chargés depuis la base et fusionnés
+  // avec les points d'origine (KMZ/CSV). On ne touche jamais aux points d'origine.
+  let userPoints = [];            // {id, categorie, ligne, nom, lat, lng}
+  let editMode = false;           // mode édition activé (après saisie du code)
+
+  function dataArrayFor(cat, ligne){
+    // renvoie le tableau .points en mémoire pour une catégorie+ligne
+    const c = accesCats.find(x=>x.id===cat);
+    if(!c) return null;
+    const lignes = c.national ? (c._regionLignes||[]) : c.lignes;
+    const l = lignes.find(x=>x.id===ligne);
+    return l ? (l.points || (l.points=[])) : null;
+  }
+
+  async function loadUserPoints(){
+    if(!supaOk){ return; }
+    try{
+      const { data, error } = await supa.from('points').select('*');
+      if(error) throw error;
+      userPoints = data||[];
+      // fusion dans les tableaux en mémoire
+      userPoints.forEach(p=>{
+        const arr=dataArrayFor(p.categorie, p.ligne);
+        if(arr && !arr.some(x=>x._sid===p.id)){
+          arr.push({ n:p.nom, lat:p.lat, lng:p.lng, _sid:p.id, _user:true });
+        }
+      });
+    }catch(e){ supaDown("Impossible de charger les points partagés."); }
+  }
+
+  async function addPoint(cat, ligne, nom, lat, lng, auteur){
+    if(!supaOk){ supaDown(); return false; }
+    try{
+      const { data, error } = await supa.from('points')
+        .insert({categorie:cat, ligne:ligne, nom:nom, lat:lat, lng:lng}).select().single();
+      if(error) throw error;
+      const arr=dataArrayFor(cat, ligne);
+      if(arr) arr.push({ n:nom, lat:lat, lng:lng, _sid:data.id, _user:true });
+      logAction('ajout', cat, ligne, nom, lat, lng, auteur);
+      return true;
+    }catch(e){ supaDown("Ajout impossible, réessayez plus tard."); return false; }
+  }
+
+  async function deletePoint(sid, cat, ligne, nom, auteur){
+    if(!supaOk){ supaDown(); return false; }
+    try{
+      const { error } = await supa.from('points').delete().eq('id', sid);
+      if(error) throw error;
+      const arr=dataArrayFor(cat, ligne);
+      if(arr){ const i=arr.findIndex(x=>x._sid===sid); if(i>=0) arr.splice(i,1); }
+      logAction('suppression', cat, ligne, nom, null, null, auteur);
+      return true;
+    }catch(e){ supaDown("Suppression impossible, réessayez plus tard."); return false; }
+  }
+
+  async function logAction(action, cat, ligne, nom, lat, lng, auteur){
+    if(!supaOk) return;
+    try{ await supa.from('logs').insert({action, categorie:cat, ligne, nom, lat, lng, auteur:auteur||null}); }catch(e){}
+  }
+
+  // Sauvegarde quotidienne : crée un instantané si aucun pour aujourd'hui
+  async function ensureDailyBackup(){
+    if(!supaOk) return;
+    try{
+      const jour = new Date().toISOString().slice(0,10);
+      const { data } = await supa.from('backups').select('jour').eq('jour', jour).maybeSingle();
+      if(data) return; // déjà fait aujourd'hui
+      const { data: pts } = await supa.from('points').select('*');
+      await supa.from('backups').insert({ jour, contenu: pts||[] });
+    }catch(e){}
+  }
+
+  // Temps réel : recharge l'affichage quand un autre utilisateur modifie
+  function subscribeRealtime(){
+    if(!supaOk) return;
+    try{
+      supa.channel('points-rt')
+        .on('postgres_changes', {event:'*', schema:'public', table:'points'}, payload=>{
+          applyRemoteChange(payload);
+        }).subscribe();
+    }catch(e){}
+  }
+  function applyRemoteChange(payload){
+    const p = payload.new || payload.old; if(!p) return;
+    const arr = dataArrayFor(p.categorie, p.ligne); if(!arr) return;
+    if(payload.eventType==='INSERT'){
+      if(!arr.some(x=>x._sid===p.id)) arr.push({n:p.nom,lat:p.lat,lng:p.lng,_sid:p.id,_user:true});
+    } else if(payload.eventType==='DELETE'){
+      const i=arr.findIndex(x=>x._sid===p.id); if(i>=0) arr.splice(i,1);
+    }
+    // rafraîchit si on regarde justement cette ligne/catégorie
+    if(currentCat && currentLine && currentCat.id===p.categorie && currentLine.id===p.ligne){
+      const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
+      selectLine(currentLine.id, lignes);
+    }
+  }
+
+  // ---- UI d'édition ----
+  function toggleEdit(){
+    if(editMode){ editMode=false; updateEditUI(); return; }
+    const code = prompt("Code d'accès pour modifier les points :");
+    if(code===null) return;
+    if(code===EDIT_CODE){ editMode=true; updateEditUI(); }
+    else alert("Code incorrect.");
+  }
+  function updateEditUI(){
+    const btn=document.getElementById('editBtn');
+    if(btn){ btn.textContent = editMode ? '✓ Mode édition actif' : '✏️ Modifier les points'; btn.classList.toggle('on', editMode); }
+    const hint=document.getElementById('editHint');
+    if(hint) hint.style.display = editMode ? 'block' : 'none';
+    // redessine pour afficher/cacher les poignées de suppression
+    if(currentCat && currentLine){
+      const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
+      if(!currentCat.segments) selectLine(currentLine.id, lignes);
+    }
+  }
+  // Ajout par clic sur la carte (en mode édition)
+  function onMapClickAdd(e){
+    if(!editMode || !currentCat || !currentLine) return;
+    if(currentCat.segments){ alert("L'ajout de points n'est pas disponible pour les Particularités locales."); return; }
+    const nom = prompt("Nom du nouveau point (ex. PN 42, Accès Poste 3) :");
+    if(!nom) return;
+    const auteur = localStorage.getItem('bn_auteur') || promptAuteur();
+    addPoint(currentCat.id, currentLine.id, nom.trim(), +e.latlng.lat.toFixed(6), +e.latlng.lng.toFixed(6), auteur)
+      .then(ok=>{ if(ok){ const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes; selectLine(currentLine.id, lignes); }});
+  }
+  function promptAuteur(){
+    const a = prompt("Votre nom (pour le journal des modifications) :")||'';
+    if(a) try{ localStorage.setItem('bn_auteur', a); }catch(e){}
+    return a;
+  }
+
   function initAcces(){
     buildCatSelector();
     selectCat(accesCats[0].id);
@@ -1043,7 +1224,21 @@
     document.getElementById('ctxLabel').textContent=titles[id]||'';
     window.scrollTo({top:0,behavior:'smooth'});
     if(id==='acces'){
-      if(!currentCat){ initAcces(); }
+      if(!currentCat){
+        initAcces();
+        // chargement collaboratif (une seule fois)
+        if(supaOk && !window._supaInit){
+          window._supaInit=true;
+          loadUserPoints().then(()=>{
+            ensureDailyBackup();
+            subscribeRealtime();
+            if(currentCat && currentLine){
+              const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
+              selectLine(currentLine.id, lignes);
+            }
+          });
+        }
+      }
       else if(currentLine){
         const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
         selectLine(currentLine.id, lignes);
