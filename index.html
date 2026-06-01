@@ -207,6 +207,22 @@
   .lk .lbl{flex:1;font-size:14px;font-weight:600;}
   .lk .go{color:var(--gris-clair);font-size:13px;font-weight:700;flex-shrink:0;}
   .lk:hover .go{color:var(--accent,var(--bleu));}
+  /* Nuage de choix (popover) */
+  .pop-wrap{position:relative;}
+  .pop-cloud{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:50;
+    background:var(--blanc);border:1px solid var(--gris-bord);border-radius:12px;
+    box-shadow:0 8px 28px rgba(0,0,0,.18);padding:10px;display:none;min-width:230px;}
+  .pop-cloud.open{display:block;}
+  .pop-cloud::before{content:"";position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+    border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:8px solid var(--gris-bord);}
+  .pop-cloud::after{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+    border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:7px solid var(--blanc);}
+  .pop-cloud a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+    text-decoration:none;color:inherit;font-size:13px;font-weight:600;background:var(--gris-bg);margin-bottom:7px;
+    border-left:4px solid var(--accent,var(--bleu));}
+  .pop-cloud a:last-child{margin-bottom:0;}
+  .pop-cloud a:hover{box-shadow:0 2px 8px rgba(0,0,0,.1);}
+  .pop-cloud a .go{margin-left:auto;color:var(--gris-clair);font-size:13px;font-weight:700;}
 
   /* planning */
   .plan{padding:18px 16px 24px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -263,7 +279,7 @@
       <div class="group-title"><span class="dot"></span>Applications métier</div>
       <div class="list">
         <a class="row b-blue" href="#" target="_blank"><div class="ic">📊</div><div class="tx"><div class="lbl">Monit-IV</div><div class="sub">Supervision</div></div><span class="ext">↗ EXTERNE</span></a>
-        <a class="row b-blue" href="#" target="_blank"><div class="ic">🎬</div><div class="tx"><div class="lbl">EVS</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-blue" href="https://prod.asr.reseau.sncf.fr/login" target="_blank"><div class="ic">🎬</div><div class="tx"><div class="lbl">EVS</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-blue" href="#" target="_blank"><div class="ic">🗄️</div><div class="tx"><div class="lbl">Digidoc+</div><div class="sub">Gestion documentaire</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-blue" href="#" target="_blank"><div class="ic">🚗</div><div class="tx"><div class="lbl">Véhicule</div><div class="sub">Gestion du parc</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-red"  href="#" target="_blank"><div class="ic">🛡️</div><div class="tx"><div class="lbl">Odin</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
@@ -374,7 +390,7 @@
     </div>
     <div class="links">
       <a class="lk" style="--accent:var(--carmillon)" href="#" target="_blank"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go">↗</span></a>
-      <a class="lk" style="--accent:var(--carmillon)" href="#" target="_blank"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
+      <a class="lk" style="--accent:var(--carmillon)" href="https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9/Code%20d%27acc%C3%A9s/Code_d%27acc%C3%A9s.xlsx?d=wafc1c76d91f94eac93b2b48fc9839793&csf=1&web=1&e=aybRkZ" target="_blank"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
     </div>
   </div>
 
@@ -409,22 +425,55 @@
   }
 
   const domains=[
-    {e:'🔊',n:'Sonorisation'},
-    {e:'🔀',n:'Commutation'},
-    {e:'📞',n:'Téléphonie'},
-    {e:'📺',n:'Téléaffichage'},
-    {e:'📡',n:'INPT'},
-    {e:'🔒',n:'Sûreté'},
-    {e:'⚡',n:'Énergie'},
-    {e:'📶',n:'GSM-R'},
-    {e:'📡',n:'Transmission'}
+    {e:'🔊',n:'Sonorisation',  fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_A_Appareils_%C3%A0_fonction_voyageurs_sono_chrono?csf=1&web=1&e=ar2gEN'},
+    {e:'🔀',n:'Commutation',   fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_C_R%C3%A9seau_t%C3%A9l%C3%A9phonique_commut%C3%A9_et_VOIP?csf=1&web=1&e=EUrdRY'},
+    {e:'📞',n:'Téléphonie',    fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_F_T%C3%A9l%C3%A9phonie_Ferroviaire?csf=1&web=1&e=fRReZb'},
+    {e:'📺',n:'Téléaffichage', fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_H_T%C3%A9l%C3%A9affichage?csf=1&web=1&e=aFR2GX'},
+    {e:'📡',n:'INPT',          fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_M_I.N.P.T?csf=1&web=1&e=pinMYk'},
+    {e:'🔒',n:'Sûreté',        fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9?csf=1&web=1&e=sHWBca'},
+    {e:'⚡',n:'Énergie',       fichesLinks:[
+      {t:'Atelier énergie Télécom', u:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_P_Atelier_%C3%A9nergie_T%C3%A9l%C3%A9com?csf=1&web=1&e=fhzgdn'},
+      {t:'Mise à jour consommation', u:'http://alimentation.mn.sncf.fr/controller/alimentation/alimentation.php?page=edit'}
+    ]},
+    {e:'📶',n:'GSM-R',         fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_J_GSMR/Maintenance?csf=1&web=1&e=QiFUUO'},
+    {e:'📡',n:'Transmission',  fichesLinks:[
+      {t:'Fiches Transmission', u:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_T_Transmission?csf=1&web=1&e=Fbcay4'},
+      {t:'Schémas AF', u:'https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_T_Transmission/2%20AF/MAINTENANCES_BN/maintenance%20AF%202021/Maints%20AF80.xlsx?d=w72f37530ebaa47de85a32fb10da5a45a&csf=1&web=1&e=yVJD3m'}
+    ]}
   ];
   const accents={ 'L-bn':'var(--vert)','L-docs':'var(--bleu)','L-fiches':'var(--orange)','L-reseau':'var(--anthracite)' };
+  // associe chaque onglet à la propriété du domaine contenant son lien
+  const tabKey={ 'L-fiches':'fiches' };
   function build(id){
-    document.getElementById(id).innerHTML = domains.map(d=>
-      `<a class="lk" style="--accent:${accents[id]}" href="#" target="_blank"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go">↗</span></a>`
-    ).join('');
+    const key=tabKey[id];
+    document.getElementById(id).innerHTML = domains.map((d,i)=>{
+      const links=(key && d[key+'Links']) ? d[key+'Links'] : null;
+      if(links){
+        // domaine à choix : clic gauche ouvre un nuage avec les boutons
+        const subs=links.map(l=>
+          `<a style="--accent:${accents[id]}" href="${l.u}" target="_blank">${l.t}<span class="go">↗</span></a>`
+        ).join('');
+        return `<div class="pop-wrap">`
+             + `<a class="lk" style="--accent:${accents[id]}" href="#" onclick="openCloud(event,this);return false;"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go">▾</span></a>`
+             + `<div class="pop-cloud">${subs}</div>`
+             + `</div>`;
+      }
+      const url=(key && d[key]) ? d[key] : '#';
+      return `<a class="lk" style="--accent:${accents[id]}" href="${url}" target="_blank"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go">↗</span></a>`;
+    }).join('');
   }
+  // ouvre/ferme le nuage de choix ; ferme les autres
+  function openCloud(ev, el){
+    ev.stopPropagation();
+    const cloud = el.parentElement.querySelector('.pop-cloud');
+    const wasOpen = cloud.classList.contains('open');
+    document.querySelectorAll('.pop-cloud.open').forEach(c=>c.classList.remove('open'));
+    if(!wasOpen) cloud.classList.add('open');
+  }
+  // clic ailleurs : ferme le nuage
+  document.addEventListener('click', ()=>{
+    document.querySelectorAll('.pop-cloud.open').forEach(c=>c.classList.remove('open'));
+  });
   ['L-bn','L-docs','L-fiches','L-reseau'].forEach(build);
 
   // ===== ACCÈS : sites par domaine, affichés sur carte OpenStreetMap (Leaflet) =====
