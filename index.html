@@ -868,10 +868,10 @@
     const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom:19, attribution:'© Esri'
     });
-    // Couche dédiée au réseau ferré (surligne les voies)
+    // Couche dédiée au réseau ferré (surligne les voies) — activée par défaut
     const rail = L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
       maxZoom:19, opacity:.9, attribution:'© OpenRailwayMap', subdomains:'abc'
-    });
+    }).addTo(leafletMap);
     L.control.layers(
       { 'Plan détaillé':osm, 'Plan clair':voyager, 'Satellite':sat },
       { '🚆 Voies ferrées (surlignées)':rail },
@@ -1228,7 +1228,6 @@
           const dash=st.dashArray?'border-top:3px dashed '+st.color+';background:none;height:0':'background:'+st.color;
           return '<span class="leg-item"><span class="leg-line" style="'+dash+'"></span>'+(st.label||k)+'</span>';}).join('')+'</div>';
     }
-    html+='<div class="leg-row" style="margin-top:8px"><span class="leg-item"><span class="leg-gare-tag">Gare</span>Gare voyageurs (nom affiché)</span></div>';
     el.innerHTML=html;
     el.style.display='block';
   }
@@ -1281,22 +1280,9 @@
     });
   }
   function addGaresOverlay(lineId){
+    // Les noms de gares/villes sont déjà fournis par le fond de carte (OSM + voies ferrées),
+    // on n'ajoute donc plus nos propres étiquettes pour éviter les doublons.
     clearGares();
-    const gs=(garesData[lineId])||[];
-    if(!gs.length) return;
-    garesLayer=L.layerGroup();
-    gs.forEach(g=>{
-      const ic=L.divIcon({className:'gare-name-marker',
-        html:'<div class="gare-name">'+g.n+'</div>',
-        iconSize:[0,0], iconAnchor:[0,0]});
-      const m=L.marker([g.lat,g.lng],{icon:ic,zIndexOffset:1000})
-        .bindPopup('<div class="pop-name">🚉 '+g.n+'</div><div style="font-size:11px;color:#5a6571">'+(g.tri||'')+'</div>');
-      garesLayer.addLayer(m);
-    });
-    garesLayer.addTo(leafletMap);
-    leafletMap.off('zoomend', updateGaresVisibility);
-    leafletMap.on('zoomend', updateGaresVisibility);
-    setTimeout(updateGaresVisibility, 100);
   }
 
   // ---- Appels API open data SNCF (côté navigateur) ----
