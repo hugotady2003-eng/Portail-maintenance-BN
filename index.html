@@ -191,6 +191,45 @@
   .edit-btn{position:relative;z-index:5;display:block;width:calc(100% - 32px);margin:0 16px 10px;padding:11px;background:var(--blanc);color:var(--bleu);border:1.5px solid var(--bleu);border-radius:9px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
   .edit-btn.on{background:#0b8043;border-color:#0b8043;color:#fff;}
   .edit-hint{margin:0 16px 12px;padding:10px 12px;background:#fff8e6;border:1px solid #f3e2a8;border-radius:9px;font-size:12.5px;color:#6b5a1e;line-height:1.45;}
+  /* enrobage carte + incrustations */
+  .map-wrap{position:relative;}
+  .leaflet-map.edit-active{cursor:crosshair;}
+  .leaflet-map.edit-active .leaflet-marker-icon{cursor:pointer;}
+  .map-edit-overlay{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:600;
+    background:rgba(11,128,67,.96);color:#fff;font-size:13px;font-weight:700;padding:9px 16px;border-radius:30px;
+    box-shadow:0 4px 16px rgba(0,0,0,.28);pointer-events:none;display:flex;align-items:center;gap:8px;
+    white-space:nowrap;max-width:calc(100% - 24px);animation:editPulse 2s ease-in-out infinite;}
+  .map-edit-overlay .tap-dot{width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.7);animation:tapRing 1.4s ease-out infinite;}
+  @keyframes tapRing{0%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}70%{box-shadow:0 0 0 10px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+  @keyframes editPulse{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-2px)}}
+  /* modale d'ajout de point */
+  .pt-modal{position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);
+    display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .pt-modal-card{background:var(--blanc);border-radius:18px;width:100%;max-width:380px;padding:22px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);animation:popUp .2s cubic-bezier(.22,.61,.36,1);}
+  @keyframes popUp{from{transform:scale(.94);opacity:.6}to{transform:scale(1);opacity:1}}
+  .pt-modal-title{font-size:17px;font-weight:800;color:var(--anthracite);display:flex;align-items:center;gap:8px;}
+  .pt-modal-coords{font-size:11.5px;color:var(--texte2);margin:5px 0 16px;font-weight:600;background:var(--gris-bg);
+    border-radius:8px;padding:7px 10px;display:inline-flex;align-items:center;gap:6px;}
+  .pt-field{display:block;font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    color:var(--texte2);margin-bottom:13px;}
+  .pt-field .pt-opt{text-transform:none;letter-spacing:0;font-weight:600;color:var(--gris-clair);font-size:11px;}
+  .pt-field input{display:block;width:100%;margin-top:6px;box-sizing:border-box;border:1px solid var(--gris-bord);
+    border-radius:10px;padding:11px 13px;font-family:inherit;font-size:15px;font-weight:600;color:var(--anthracite);
+    outline:none;transition:border-color .15s,box-shadow .15s;}
+  .pt-field input:focus{border-color:var(--bleu);box-shadow:0 0 0 3px rgba(38,79,196,.14);}
+  .pt-modal-btns{display:flex;gap:9px;margin-top:6px;}
+  .pt-cancel{flex:0 0 auto;background:var(--blanc);color:var(--texte2);border:1px solid var(--gris-bord);
+    border-radius:10px;padding:12px 18px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;}
+  .pt-add{flex:1;background:#0b8043;color:#fff;border:none;border-radius:10px;padding:12px;font-family:inherit;
+    font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(11,128,67,.32);}
+  .pt-add:disabled{opacity:.5;cursor:default;box-shadow:none;}
+  /* badge PK */
+  .acc-pk{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#0b5cba;
+    background:#e8f1fc;border:1px solid #c7ddf7;border-radius:6px;padding:1px 7px;margin-right:7px;}
+  .pop-pk{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#0b5cba;
+    background:#e8f1fc;border:1px solid #c7ddf7;border-radius:6px;padding:2px 8px;margin-bottom:8px;}
   .pop-del{background:#e53935;color:#fff;border:none;border-radius:7px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;width:100%;}
   .pop-tag{font-size:10px;background:#e3f2fd;color:#1565c0;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;}
   .supa-banner{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;background:#b71c1c;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:90%;text-align:center;display:none;}
@@ -199,11 +238,12 @@
   .sub-btn{flex:1;border:1px solid var(--gris-bord);background:var(--blanc);color:var(--texte2);font-family:inherit;font-size:13px;font-weight:700;padding:10px;border-radius:9px;cursor:pointer;transition:all .15s;}
   .sub-btn.active{background:var(--bleu);border-color:var(--bleu);color:#fff;box-shadow:0 2px 8px rgba(38,79,196,.32);}
   .sub-btn:hover:not(.active){border-color:var(--bleu);color:var(--bleu);}
-  .acc-legend{padding:12px 16px;background:var(--blanc);border-bottom:1px solid var(--gris-bord);}
-  .leg-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--texte2);margin-bottom:8px;}
-  .leg-row{display:flex;flex-wrap:wrap;gap:10px 16px;}
-  .leg-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--texte);}
-  .leg-line{display:inline-block;width:22px;height:5px;border-radius:3px;flex-shrink:0;}
+  .acc-legend{padding:12px 16px;background:linear-gradient(180deg,#fbfcfe,var(--blanc));border-bottom:1px solid var(--gris-bord);}
+  .leg-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--texte2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .leg-title::before{content:"";width:14px;height:4px;border-radius:3px;background:var(--sillon-grad);}
+  .leg-row{display:flex;flex-wrap:wrap;gap:8px 14px;}
+  .leg-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--texte);background:var(--blanc);border:1px solid var(--gris-bord);border-radius:20px;padding:3px 10px 3px 8px;}
+  .leg-line{display:inline-block;width:20px;height:5px;border-radius:3px;flex-shrink:0;}
   .pin-marker{background:none;border:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
   .acc-see{font-size:11px;font-weight:700;color:var(--bleu);white-space:nowrap;flex-shrink:0;}
   .map-empty-msg{display:flex;height:340px;align-items:center;justify-content:center;text-align:center;color:var(--texte2);font-size:14px;padding:20px;border-bottom:1px solid var(--gris-bord);}
@@ -466,10 +506,13 @@
     </div>
 
     <!-- Carte interactive (Leaflet + OpenStreetMap) -->
-    <div id="accMap" class="leaflet-map"></div>
+    <div class="map-wrap">
+      <div id="accMap" class="leaflet-map"></div>
+      <div id="mapEditOverlay" class="map-edit-overlay" style="display:none;"><span class="tap-dot"></span>Touchez la carte à l'endroit de l'accès</div>
+    </div>
     <button id="locateBtn" class="locate-btn" onclick="locateMe()" title="Ma position">📍 Activer ma position</button>
     <button id="editBtn" class="edit-btn" onclick="toggleEdit()">✏️ Modifier les points</button>
-    <div id="editHint" class="edit-hint" style="display:none;">Mode édition : touchez la carte pour <b>ajouter</b> un point, ou ouvrez un point ajouté puis <b>Supprimer</b>. Les modifications sont partagées avec tous.</div>
+    <div id="editHint" class="edit-hint" style="display:none;">✏️ <b>Mode édition activé.</b> Touchez la carte à l'endroit voulu pour <b>ajouter un point</b> (vous pourrez saisir son nom et son PK). Pour <b>supprimer</b>, ouvrez un point ajouté puis « Supprimer ». Les modifications sont partagées avec tous.</div>
     <!-- Légende des particularités locales -->
     <div id="accLegend" class="acc-legend" style="display:none;"></div>
 
@@ -482,6 +525,24 @@
 
     <!-- Liste des sites avec navigation Maps / Waze -->
     <div class="acc-list" id="accList"></div>
+  </div>
+
+  <!-- Modale d'ajout de point d'accès -->
+  <div id="ptModal" class="pt-modal" style="display:none;">
+    <div class="pt-modal-card">
+      <div class="pt-modal-title">📍 Nouveau point d'accès</div>
+      <div class="pt-modal-coords" id="ptModalCoords">—</div>
+      <label class="pt-field">Nom du point
+        <input id="ptName" type="text" autocomplete="off" placeholder="ex. PN 42, Accès Poste 3" oninput="ptValidate()">
+      </label>
+      <label class="pt-field">PK — point kilométrique <span class="pt-opt">(facultatif)</span>
+        <input id="ptPk" type="text" autocomplete="off" placeholder="ex. 142+350">
+      </label>
+      <div class="pt-modal-btns">
+        <button class="pt-cancel" onclick="closePtModal()">Annuler</button>
+        <button class="pt-add" id="ptAddBtn" onclick="confirmAddPoint()" disabled>Ajouter le point</button>
+      </div>
+    </div>
   </div>
   <!-- ============ POWER-SWITCH ============ -->
   <div id="powerswitch" class="screen">
@@ -796,10 +857,19 @@
 
   function ensureMap(){
     if(leafletMap) return;
-    leafletMap = L.map('accMap', { scrollWheelZoom:true }).setView([49.0, -0.5], 8);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom:19, attribution:'© OpenStreetMap'
+    leafletMap = L.map('accMap', { scrollWheelZoom:true, zoomControl:true }).setView([49.0, -0.5], 8);
+    // Fond de carte clair et lisible (CartoDB Voyager), avec bascule possible vers le plan détaillé OSM
+    const voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom:20, attribution:'© OpenStreetMap, © CARTO', subdomains:'abcd'
     }).addTo(leafletMap);
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom:19, attribution:'© OpenStreetMap'
+    });
+    const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom:19, attribution:'© Esri'
+    });
+    L.control.layers({ 'Plan clair':voyager, 'Plan détaillé':osm, 'Satellite':sat }, null, { position:'topright', collapsed:true }).addTo(leafletMap);
+    L.control.scale({ imperial:false, position:'bottomleft' }).addTo(leafletMap);
     markerLayer = L.layerGroup().addTo(leafletMap);
     leafletMap.on('click', onMapClickAdd);
     leafletMap.on('popupopen', function(e){
@@ -840,7 +910,10 @@
       +'<button class="pop-cmt-cancel" onclick="popCancelComment()">Annuler</button>'
       +'<button class="pop-cmt-save" onclick="popSaveComment()">💾 Enregistrer</button>'
       +'</div></div>';
+    let pkHtml='';
+    if(p._pk){ pkHtml='<div class="pop-pk">📏 PK '+escHtml(p._pk)+'</div>'; }
     return '<div class="pop-name">'+p.n+(p._user?' <span class="pop-tag">ajouté</span>':'')+'</div>'+
+           pkHtml+
            '<div class="pop-coords">'+p.lat.toFixed(5)+', '+p.lng.toFixed(5)+'</div>'+
            '<div class="pop-btns">'+
              '<a class="pop-btn pop-waze" href="'+waze+'" target="_blank" rel="noopener noreferrer">'+wazeIcon+'<span>Waze</span></a>'+
@@ -956,6 +1029,7 @@
     regSel.style.display='none';
     localTog.style.display = currentCat.segments ? 'flex' : 'none';
     if(!currentCat.segments){ clearSegments(); document.getElementById('accLegend').style.display='none'; }
+    if(typeof refreshEditOverlay==='function') refreshEditOverlay();
     if(currentCat.national){
       regSel.style.display='flex';
       buildRegionSelector();
@@ -1347,7 +1421,7 @@
       return `<div class="acc-card" id="acc-card-${i}">
         <div class="acc-head" onclick="focusPoint(${i})" style="cursor:pointer;">
           <div class="acc-pin">📍</div>
-          <div class="acc-info"><div class="acc-name">${p.n}</div><div class="acc-addr">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div></div>
+          <div class="acc-info"><div class="acc-name">${p.n}</div><div class="acc-addr">${p._pk?`<span class="acc-pk">📏 PK ${escHtml(p._pk)}</span>`:''}${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div></div>
           <span class="acc-see">Voir →</span>
         </div>
         <div class="acc-btns">
@@ -1393,7 +1467,7 @@
       userPoints.forEach(p=>{
         const arr=dataArrayFor(p.categorie, p.ligne);
         if(arr && !arr.some(x=>x._sid===p.id)){
-          arr.push({ n:p.nom, lat:p.lat, lng:p.lng, _sid:p.id, _user:true, _commentaire:p.commentaire||'' });
+          arr.push({ n:p.nom, lat:p.lat, lng:p.lng, _sid:p.id, _user:true, _commentaire:p.commentaire||'', _pk:p.pk||'' });
         }
       });
       // Chargement des commentaires pour TOUS les points (même non-utilisateurs)
@@ -1417,14 +1491,20 @@
     }catch(e){}
   }
 
-  async function addPoint(cat, ligne, nom, lat, lng, auteur){
+  async function addPoint(cat, ligne, nom, lat, lng, auteur, pk){
     if(!supaOk){ supaDown(); return false; }
+    const base={categorie:cat, ligne:ligne, nom:nom, lat:lat, lng:lng};
+    const payload = pk ? Object.assign({pk:pk}, base) : base;
     try{
-      const { data, error } = await supa.from('points')
-        .insert({categorie:cat, ligne:ligne, nom:nom, lat:lat, lng:lng}).select().single();
-      if(error) throw error;
+      let res = await supa.from('points').insert(payload).select().single();
+      // si la colonne "pk" n'existe pas encore en base, on réessaie sans, pour ne pas bloquer l'ajout
+      if(res.error && pk){
+        res = await supa.from('points').insert(base).select().single();
+        if(!res.error){ supaDown("Point ajouté ✓ — mais le PK n'a pas pu être enregistré (colonne « pk » absente de la base)."); pk=''; }
+      }
+      if(res.error) throw res.error;
       const arr=dataArrayFor(cat, ligne);
-      if(arr) arr.push({ n:nom, lat:lat, lng:lng, _sid:data.id, _user:true });
+      if(arr) arr.push({ n:nom, lat:lat, lng:lng, _sid:res.data.id, _user:true, _pk: pk||'' });
       logAction('ajout', cat, ligne, nom, lat, lng, auteur);
       return true;
     }catch(e){ supaDown("Ajout impossible, réessayez plus tard."); return false; }
@@ -1473,7 +1553,7 @@
     const p = payload.new || payload.old; if(!p) return;
     const arr = dataArrayFor(p.categorie, p.ligne); if(!arr) return;
     if(payload.eventType==='INSERT'){
-      if(!arr.some(x=>x._sid===p.id)) arr.push({n:p.nom,lat:p.lat,lng:p.lng,_sid:p.id,_user:true});
+      if(!arr.some(x=>x._sid===p.id)) arr.push({n:p.nom,lat:p.lat,lng:p.lng,_sid:p.id,_user:true,_pk:p.pk||''});
     } else if(payload.eventType==='DELETE'){
       const i=arr.findIndex(x=>x._sid===p.id); if(i>=0) arr.splice(i,1);
     }
@@ -1492,26 +1572,68 @@
     if(code===EDIT_CODE){ editMode=true; updateEditUI(); }
     else alert("Code incorrect.");
   }
+  function refreshEditOverlay(){
+    const canAdd = editMode && currentCat && !currentCat.segments;
+    const ov=document.getElementById('mapEditOverlay');
+    if(ov) ov.style.display = canAdd ? 'flex' : 'none';
+    const mapEl=document.getElementById('accMap');
+    if(mapEl) mapEl.classList.toggle('edit-active', !!canAdd);
+  }
   function updateEditUI(){
     const btn=document.getElementById('editBtn');
-    if(btn){ btn.textContent = editMode ? '✓ Mode édition actif' : '✏️ Modifier les points'; btn.classList.toggle('on', editMode); }
+    if(btn){ btn.textContent = editMode ? '✓ Mode édition actif — terminer' : '✏️ Modifier les points'; btn.classList.toggle('on', editMode); }
     const hint=document.getElementById('editHint');
     if(hint) hint.style.display = editMode ? 'block' : 'none';
+    refreshEditOverlay();
     // redessine pour afficher/cacher les poignées de suppression
     if(currentCat && currentLine){
       const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
       if(!currentCat.segments) selectLine(currentLine.id, lignes);
     }
   }
-  // Ajout par clic sur la carte (en mode édition)
+  // Ajout par clic sur la carte (en mode édition) → ouvre la modale
+  let pendingLatLng = null;
   function onMapClickAdd(e){
     if(!editMode || !currentCat || !currentLine) return;
     if(currentCat.segments){ alert("L'ajout de points n'est pas disponible pour les Particularités locales."); return; }
-    const nom = prompt("Nom du nouveau point (ex. PN 42, Accès Poste 3) :");
+    openPtModal(e.latlng);
+  }
+  function openPtModal(latlng){
+    pendingLatLng = latlng;
+    const m=document.getElementById('ptModal');
+    document.getElementById('ptModalCoords').textContent = '📍 '+latlng.lat.toFixed(5)+', '+latlng.lng.toFixed(5);
+    document.getElementById('ptName').value='';
+    document.getElementById('ptPk').value='';
+    document.getElementById('ptAddBtn').disabled=true;
+    m.style.display='flex';
+    setTimeout(()=>document.getElementById('ptName').focus(), 60);
+  }
+  function closePtModal(){
+    const m=document.getElementById('ptModal'); if(m) m.style.display='none';
+    pendingLatLng=null;
+  }
+  function ptValidate(){
+    const ok = document.getElementById('ptName').value.trim().length>0;
+    document.getElementById('ptAddBtn').disabled = !ok;
+  }
+  function confirmAddPoint(){
+    if(!pendingLatLng) return;
+    const nom=document.getElementById('ptName').value.trim();
     if(!nom) return;
+    const pk=document.getElementById('ptPk').value.trim();
+    const ll=pendingLatLng;
+    const btn=document.getElementById('ptAddBtn');
+    btn.disabled=true; btn.textContent='⏳ Ajout…';
     const auteur = localStorage.getItem('bn_auteur') || promptAuteur();
-    addPoint(currentCat.id, currentLine.id, nom.trim(), +e.latlng.lat.toFixed(6), +e.latlng.lng.toFixed(6), auteur)
-      .then(ok=>{ if(ok){ const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes; selectLine(currentLine.id, lignes); }});
+    addPoint(currentCat.id, currentLine.id, nom, +ll.lat.toFixed(6), +ll.lng.toFixed(6), auteur, pk)
+      .then(ok=>{
+        btn.textContent='Ajouter le point';
+        if(ok){
+          closePtModal();
+          const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes;
+          selectLine(currentLine.id, lignes);
+        } else { btn.disabled=false; }
+      });
   }
   function promptAuteur(){
     const a = prompt("Votre nom (pour le journal des modifications) :")||'';
