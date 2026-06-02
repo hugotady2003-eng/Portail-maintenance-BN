@@ -858,17 +858,25 @@
   function ensureMap(){
     if(leafletMap) return;
     leafletMap = L.map('accMap', { scrollWheelZoom:true, zoomControl:true }).setView([49.0, -0.5], 8);
-    // Fond de carte clair et lisible (CartoDB Voyager), avec bascule possible vers le plan détaillé OSM
-    const voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom:20, attribution:'© OpenStreetMap, © CARTO', subdomains:'abcd'
-    }).addTo(leafletMap);
+    // Fond OSM par défaut : les voies ferrées y sont bien visibles
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom:19, attribution:'© OpenStreetMap'
+    }).addTo(leafletMap);
+    const voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom:20, attribution:'© OpenStreetMap, © CARTO', subdomains:'abcd'
     });
     const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom:19, attribution:'© Esri'
     });
-    L.control.layers({ 'Plan clair':voyager, 'Plan détaillé':osm, 'Satellite':sat }, null, { position:'topright', collapsed:true }).addTo(leafletMap);
+    // Couche dédiée au réseau ferré (surligne les voies)
+    const rail = L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+      maxZoom:19, opacity:.9, attribution:'© OpenRailwayMap', subdomains:'abc'
+    });
+    L.control.layers(
+      { 'Plan détaillé':osm, 'Plan clair':voyager, 'Satellite':sat },
+      { '🚆 Voies ferrées (surlignées)':rail },
+      { position:'topright', collapsed:true }
+    ).addTo(leafletMap);
     L.control.scale({ imperial:false, position:'bottomleft' }).addTo(leafletMap);
     markerLayer = L.layerGroup().addTo(leafletMap);
     leafletMap.on('click', onMapClickAdd);
