@@ -597,6 +597,41 @@
   .cl-tag.new{background:#eafaf0;color:#1a7f43;border:1px solid #b7e4c7;}
   .cl-tag.fix{background:#fdeeee;color:#b42318;border:1px solid #f5c6c6;}
   .cl-tag.ui {background:#f1ecfd;color:#7a1fd6;border:1px solid #d9c8f7;}
+  /* ===== Page Numéros d'astreinte / Escalade ===== */
+  .infosheet{padding:14px 14px 30px;display:flex;flex-direction:column;gap:14px;}
+  .is-sec{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--texte2);
+    margin:6px 4px 0;display:flex;align-items:center;gap:7px;}
+  .is-sec::before{content:"";width:16px;height:4px;border-radius:3px;background:var(--sillon-grad);}
+  .is-card{position:relative;border-radius:18px;padding:14px 15px;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.18) 55%,rgba(255,255,255,.28));
+    background-color:rgba(255,255,255,.24);
+    -webkit-backdrop-filter:blur(18px) saturate(185%);backdrop-filter:blur(18px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);border-left:4px solid var(--carmillon);
+    box-shadow:0 8px 24px rgba(15,23,42,.12),inset 0 1px 0 rgba(255,255,255,.92);}
+  .is-card.esc{border-left-color:#9c1c69;}
+  .is-title{font-size:14.5px;font-weight:800;color:var(--anthracite);margin-bottom:9px;}
+  .is-row{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-top:1px solid rgba(15,23,42,.07);}
+  .is-row:first-of-type{border-top:none;}
+  .is-lbl{font-size:13px;font-weight:700;color:var(--anthracite);}
+  .is-vals{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:2px;}
+  a.tel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#0b5cba;
+    background:#e8f1fc;border:1px solid #c7ddf7;border-radius:8px;padding:4px 9px;text-decoration:none;}
+  a.tel::before{content:"📞";font-size:11px;}
+  a.tel:hover{background:#d8e8fb;}
+  .is-code{display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;color:var(--texte);
+    background:rgba(15,23,42,.05);border:1px solid rgba(15,23,42,.1);border-radius:8px;padding:4px 9px;}
+  a.is-mail{font-size:12px;font-weight:600;color:var(--violet-elec);text-decoration:none;word-break:break-all;}
+  a.is-mail:hover{text-decoration:underline;}
+  .esc-level{display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .esc-badge{font-size:14px;font-weight:900;color:#fff;background:#9c1c69;border-radius:9px;padding:4px 11px;letter-spacing:.5px;}
+  .esc-ho{font-size:11px;font-weight:800;color:#9c1c69;background:#f7e9f1;border:1px solid #e6c4d8;border-radius:20px;padding:3px 9px;}
+  .esc-block{padding:9px 0;border-top:1px solid rgba(15,23,42,.07);}
+  .esc-block:first-of-type{border-top:none;}
+  .esc-name{font-size:13px;font-weight:800;color:var(--anthracite);margin-bottom:5px;}
+  .esc-cas{font-size:12px;color:var(--texte2);line-height:1.45;margin-top:6px;}
+  .esc-cas b{color:var(--texte);font-weight:700;}
+  .esc-crit{font-size:12.5px;color:var(--texte);line-height:1.5;}
+  .esc-crit li{margin-bottom:4px;}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -910,7 +945,7 @@
       <p>Liens vers fichiers Excel mis à jour</p>
     </div>
     <div class="links">
-      <div class="lk lk-soon" style="--accent:var(--carmillon)"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go-soon">à venir</span></div>
+      <div class="lk" style="--accent:var(--carmillon);cursor:pointer;" onclick="go('numartes')"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go">→</span></div>
       <a class="lk" style="--accent:var(--carmillon)" href="https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9/Code%20d%27acc%C3%A9s/Code_d%27acc%C3%A9s.xlsx?d=wafc1c76d91f94eac93b2b48fc9839793&csf=1&web=1&e=aybRkZ" target="_blank" rel="noopener noreferrer"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
     </div>
   </div>
@@ -925,6 +960,118 @@
       <p>Historique des mises à jour &amp; correctifs</p>
     </div>
     <div class="changelog" id="changelogList"></div>
+  </div>
+
+
+  <!-- ============ NUMÉROS D'ASTREINTE / ESCALADE ARTES ============ -->
+  <div id="numartes" class="screen">
+    <div class="pagehead ph-red">
+      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
+      <button class="back" onclick="go('astreinte')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Astreinte</button>
+      <h2>Numéros Artes</h2>
+      <p>Dérangement Télécom &amp; escalade</p>
+    </div>
+    <div class="infosheet">
+
+      <div class="is-sec">Numéro Artes</div>
+
+      <div class="is-card">
+        <div class="is-title">Dérangement Télécom</div>
+        <div class="is-row">
+          <span class="is-lbl">Demande d'intervention</span>
+          <div class="is-vals"><a class="tel" href="tel:0426211602">04.26.21.16.02</a><span class="is-code">9113 · Choix</span></div>
+        </div>
+        <div class="is-row">
+          <span class="is-lbl">Supervision Artes — PCTF</span>
+          <div class="is-vals"><a class="tel" href="tel:0426211608">04.26.21.16.08</a></div>
+        </div>
+        <div class="is-row">
+          <span class="is-lbl">Supervision Artes — SAN</span>
+          <div class="is-vals"><a class="tel" href="tel:0426211627">04.26.21.16.27</a></div>
+        </div>
+      </div>
+
+      <div class="is-card">
+        <div class="is-title">Guichet National</div>
+        <div class="is-row">
+          <span class="is-lbl">Gestion des avis Travaux</span>
+          <div class="is-vals"><a class="tel" href="tel:0426211612">04.26.21.16.12</a><span class="is-code">9112 · Choix 7</span></div>
+        </div>
+      </div>
+
+      <div class="is-card">
+        <div class="is-title">Unités d'Assistance (UA)</div>
+        <div class="is-row">
+          <span class="is-lbl">Numéro commun</span>
+          <div class="is-vals"><a class="tel" href="tel:0426211612">04.26.21.16.12</a><span class="is-code">9112</span></div>
+        </div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UAIV</span><span class="is-code">Choix 5</span></div></div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UAVP</span><span class="is-code">Choix 6</span></div></div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UART</span><span class="is-code">Choix 1</span></div></div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UACA</span><span class="is-code">Choix 3</span></div></div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UAF</span><span class="is-code">Choix 2</span></div></div>
+        <div class="is-row"><div class="is-vals"><span class="is-lbl" style="min-width:60px">UAT</span><span class="is-code">Choix 4</span></div></div>
+      </div>
+
+      <div class="is-sec">Escalade Artes</div>
+
+      <div class="is-card esc">
+        <div class="is-title">L'escalade est nécessaire :</div>
+        <ul class="esc-crit">
+          <li>S'il y a une dérive du traitement d'un incident ; pas de réponse donnée quant aux délais de résolution.</li>
+          <li>S'il y a non-respect de la GTR avec la perception d'un incident non maîtrisé.</li>
+          <li>Lorsque l'incident touche la régularité des circulations ou la sécurité.</li>
+        </ul>
+      </div>
+
+      <div class="is-card esc">
+        <div class="esc-level"><span class="esc-badge">N1</span><span class="esc-ho">HO / HNO</span></div>
+        <div class="esc-block">
+          <div class="esc-name">Supervision Artes</div>
+          <div class="is-row"><span class="is-lbl">Supervision PCTF</span><div class="is-vals"><span class="is-code">70 83 50</span><a class="tel" href="tel:0426211608">04 26 21 16 08</a></div><a class="is-mail" href="mailto:supervision.pctf@sncf.fr">supervision.pctf@sncf.fr</a></div>
+          <div class="is-row"><span class="is-lbl">Supervision Agence Nationale (SAN)</span><div class="is-vals"><span class="is-code">70 70 40</span><a class="tel" href="tel:0426211627">04 26 21 16 27</a></div><a class="is-mail" href="mailto:supervision.agencenationale@sncf.fr">supervision.agencenationale@sncf.fr</a></div>
+          <div class="esc-cas"><b>Quand appeler :</b> bouclage en fin d'incident par vérification des alarmes (retour sur incident supervisé) ; si aucun ticket n'est ouvert, la Supervision en ouvrira un ; obtenir un contact autre que Télécom ; démarrage et fin d'Avis Travaux.</div>
+        </div>
+        <div class="esc-block">
+          <div class="esc-name">Back Office Centre d'appels <span class="esc-ho">HO</span></div>
+          <div class="is-row"><div class="is-vals"><span class="is-code">91 13 · Choix 2</span><a class="tel" href="tel:0426211602">04 26 21 16 02</a></div><a class="is-mail" href="mailto:actim.parcours@sncf.fr">actim.parcours@sncf.fr</a></div>
+          <div class="esc-cas"><b>Quand appeler :</b> suivi de dérangement (relance, clôture, demande d'informations sur une fiche, etc.).</div>
+        </div>
+      </div>
+
+      <div class="is-card esc">
+        <div class="esc-level"><span class="esc-badge">N2</span></div>
+        <div class="esc-block">
+          <div class="esc-name">Unités d'Assistance <span class="esc-ho">HO</span></div>
+          <div class="is-row"><div class="is-vals"><span class="is-code">91 12</span><a class="tel" href="tel:0426211612">04 26 21 16 12</a></div><span class="esc-cas">puis choix en fonction de la demande</span></div>
+          <div class="esc-cas"><b>Quand appeler :</b> demande de support technique.</div>
+        </div>
+        <div class="esc-block">
+          <div class="esc-name">Unités d'Assistance <span class="esc-ho">HNO</span></div>
+          <div class="esc-cas">Contacter via la Supervision Artes.</div>
+          <div class="esc-cas"><b>Quand appeler :</b> demande de support technique.</div>
+        </div>
+      </div>
+
+      <div class="is-card esc">
+        <div class="esc-level"><span class="esc-badge">N2 bis</span><span class="esc-ho">HO</span></div>
+        <div class="esc-block">
+          <div class="esc-name">Incidents Managers — gestion d'incidents critiques</div>
+          <div class="is-row"><div class="is-vals"><span class="is-code">91 12 · Choix 8</span><a class="tel" href="tel:0426211840">04 26 21 18 40</a></div><a class="is-mail" href="mailto:DGOP_ARTES_GESTION_INCIDENTS@sncf.fr">DGOP_ARTES_GESTION_INCIDENTS@sncf.fr</a></div>
+          <div class="esc-cas"><b>Quand appeler :</b> impossibilité d'obtenir un support N2 ; suivi d'incident critique et/ou de sécurité.</div>
+        </div>
+      </div>
+
+      <div class="is-card esc">
+        <div class="esc-level"><span class="esc-badge">N3</span><span class="esc-ho">HO / HNO</span></div>
+        <div class="esc-block">
+          <div class="esc-name">DNT — Dirigeant National Télécom</div>
+          <div class="is-row"><div class="is-vals"><a class="tel" href="tel:0777168463">07 77 16 84 63</a></div><a class="is-mail" href="mailto:ld.artes.dnt@sncf.fr">ld.artes.dnt@sncf.fr</a><span class="esc-cas">(confirmer l'appel par mail)</span></div>
+          <div class="esc-cas"><b>Quand appeler :</b> suivi d'incident critique et/ou de sécurité (le DNT doit être contacté par un cadre de préférence).</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 
@@ -2041,7 +2188,7 @@
     selectCat(accesCats[0].id);
   }
 
-    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés'};
+    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés',numartes:'Numéros Artes'};
   function go(id){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
