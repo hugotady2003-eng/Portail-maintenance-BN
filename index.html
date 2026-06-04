@@ -134,9 +134,9 @@
   .group .list{position:relative;z-index:1;}
 
   /* thèmes de sillon par groupe */
-  .grp-blue  {--grp:var(--bleu-acier);  --grp-dot:linear-gradient(90deg,var(--bleu-cobalt),var(--bleu-acier));  --grp-tint:#eaf0fc; --grp-edge:var(--bleu-acier);}
-  .grp-violet{--grp:var(--violet-elec); --grp-dot:linear-gradient(90deg,var(--violet-elec),var(--violet-vin));  --grp-tint:#f4ecfd; --grp-edge:var(--violet-elec);}
-  .grp-rose  {--grp:var(--rose-rubis);  --grp-dot:var(--sillon-grad);                                          --grp-tint:#fdecf3; --grp-edge:var(--rose-rubis);}
+  .grp-blue  {--grp:var(--bleu-acier);  --grp-dot:linear-gradient(90deg,var(--bleu-cobalt),var(--bleu-acier));  --grp-tint:#eaf0fc; --grp-edge:var(--bleu-acier); --grp-glass:rgba(38,79,196,.12);}
+  .grp-violet{--grp:var(--violet-elec); --grp-dot:linear-gradient(90deg,var(--violet-elec),var(--violet-vin));  --grp-tint:#f4ecfd; --grp-edge:var(--violet-elec); --grp-glass:rgba(144,36,250,.12);}
+  .grp-rose  {--grp:var(--rose-rubis);  --grp-dot:var(--sillon-grad);                                          --grp-tint:#fdecf3; --grp-edge:var(--rose-rubis); --grp-glass:rgba(195,0,103,.12);}
 
   /* ===== Page d'accueil : fond à sillons SNCF + listes en cartes ===== */
   #home{position:relative;}
@@ -160,14 +160,39 @@
   @keyframes sillonRun{from{stroke-dashoffset:1042;}to{stroke-dashoffset:0;}}
   @keyframes sillonDrift{from{transform:translateY(0);}to{transform:translateY(-22px);}}
   #home .hero{position:relative;z-index:1;}
-  /* chaque liste devient une carte distincte, teintée à sa couleur */
-  #home .group{position:relative;z-index:1;margin:0 12px 16px;padding:16px 14px 14px;
-    background:linear-gradient(180deg,var(--grp-tint),#ffffff 78%);
-    border:1px solid var(--gris-bord);border-radius:18px;
-    box-shadow:0 4px 18px rgba(15,23,42,.06);
+  /* listes en "liquid glass" : panneaux de verre translucides qui flottent */
+  #home .group{position:relative;z-index:1;margin:0 14px 20px;padding:18px 15px 15px;overflow:hidden;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.10) 46%,rgba(255,255,255,.22) 100%);
+    background-color:var(--grp-glass,rgba(255,255,255,.26));
+    -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+    border:1px solid rgba(255,255,255,.6);border-radius:28px;
+    box-shadow:0 20px 50px rgba(15,23,42,.20),0 4px 10px rgba(15,23,42,.07),
+      inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 0 0 1px rgba(255,255,255,.15),inset 0 -14px 30px rgba(255,255,255,.22);
     animation:riseIn .6s cubic-bezier(.22,.61,.36,1) both;}
-  #home .group::before{content:"";position:absolute;top:0;left:22px;right:22px;height:3px;border-radius:0 0 3px 3px;background:var(--grp-dot,var(--sillon-grad));opacity:.95;}
+  /* premier panneau : un peu d'air sous le hero */
+  #home .group.grp-blue{margin-top:14px;}
+  /* liseré coloré supérieur */
+  #home .group::before{content:"";position:absolute;top:0;left:24px;right:24px;height:3px;border-radius:0 0 4px 4px;background:var(--grp-dot,var(--sillon-grad));opacity:.95;z-index:2;}
+  /* reflet spéculaire (effet vitre) */
+  #home .group::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 100%);}
   #home .group .group-sillon{top:4px;}
+  #home .group .group-title,#home .group .list{position:relative;z-index:1;}
+  /* boutons en verre liquide : translucides, flou, rebord lumineux, reflet */
+  #home .row{
+    background-image:linear-gradient(135deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,.14) 48%,rgba(255,255,255,.26) 100%);
+    background-color:rgba(255,255,255,.22);
+    -webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);border-radius:16px;
+    box-shadow:0 4px 16px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -7px 16px rgba(255,255,255,.20);}
+  #home .row:hover{
+    background-color:rgba(255,255,255,.5);
+    border-color:rgba(255,255,255,.9);
+    box-shadow:0 14px 32px rgba(15,23,42,.18),inset 0 1px 0 rgba(255,255,255,1),inset 0 -7px 16px rgba(255,255,255,.3);
+    transform:translateY(-3px) scale(1.012);}
+  /* tuile d'icône en pastille de verre */
+  #home .row .ic{background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.35));
+    border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(15,23,42,.08);}
   @keyframes riseIn{from{opacity:0;transform:translateY(20px) scale(.985);}to{opacity:1;transform:translateY(0) scale(1);}}
 
   .list{display:flex;flex-direction:column;gap:8px;}
@@ -449,6 +474,100 @@
   @keyframes splashLogo{0%{filter:brightness(0);opacity:0;transform:scale(.92);}28%{opacity:1;transform:scale(1);}100%{filter:none;opacity:1;transform:scale(1);}}
   @keyframes splashOut{to{opacity:0;visibility:hidden;}}
   @keyframes splashBar{0%{transform:translateX(-120%);}100%{transform:translateX(360%);}}
+  /* ===== Verre liquide appliqué à tout le site ===== */
+  body{background:linear-gradient(160deg,#eef1f7 0%,#f5eef6 46%,#fdeef0 100%);}
+  .app{background:transparent !important;position:relative;z-index:1;}
+  .app-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;animation:sillonDrift 18s ease-in-out infinite alternate;}
+  .app-bg svg{position:absolute;inset:0;width:100%;height:100%;}
+  .app-bg path{fill:none;stroke-linecap:round;}
+  .app-bg .b{stroke-width:3.5;stroke-dasharray:1000;stroke-dashoffset:1000;animation:sillonDraw 2.2s ease forwards;}
+  .app-bg .b1{stroke:var(--violet-elec);opacity:.13;animation-delay:.05s;}
+  .app-bg .b2{stroke:var(--rose-rubis); opacity:.12;animation-delay:.2s;}
+  .app-bg .b3{stroke:var(--carmillon);  opacity:.11;animation-delay:.35s;}
+  .app-bg .b4{stroke:var(--bleu-acier); opacity:.10;animation-delay:.5s;}
+  .app-bg .g{stroke-width:5;stroke-dasharray:40 1000;stroke-dashoffset:1000;}
+  .app-bg .g1{stroke:var(--violet-elec);opacity:.5;animation:sillonRun 6s linear 2s infinite;}
+  .app-bg .g2{stroke:var(--rose-rubis); opacity:.5;animation:sillonRun 7.5s linear 3s infinite;}
+
+  /* boutons de liens (sous-pages) en verre */
+  .lk{background-image:linear-gradient(135deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,.14) 48%,rgba(255,255,255,.26) 100%);
+    background-color:rgba(255,255,255,.22);
+    -webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);border-left:4px solid var(--accent,var(--bleu));
+    box-shadow:0 4px 16px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -7px 16px rgba(255,255,255,.18);}
+  .lk:hover{background-color:rgba(255,255,255,.5);box-shadow:0 12px 28px rgba(15,23,42,.16),inset 0 1px 0 rgba(255,255,255,1);}
+  .lk .ic{background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.3));border:1px solid rgba(255,255,255,.75);}
+  .lk-soon{background-image:none;background-color:rgba(255,255,255,.28);}
+
+  /* cartes de la liste Accès en verre */
+  .acc-card{background-image:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 50%,rgba(255,255,255,.26));
+    background-color:rgba(255,255,255,.22);
+    -webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);border-left:4px solid var(--bleu);
+    box-shadow:0 5px 18px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.92);}
+
+  /* champs de recherche / légende / chargement en verre */
+  .acc-search{background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(12px) saturate(170%);backdrop-filter:blur(12px) saturate(170%);border:1px solid rgba(255,255,255,.6);}
+  .acc-legend{background:rgba(255,255,255,.42);-webkit-backdrop-filter:blur(16px) saturate(175%);backdrop-filter:blur(16px) saturate(175%);border-bottom:1px solid rgba(255,255,255,.5);}
+  .leg-item{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);}
+
+  /* barre d'onglets en verre */
+  .tabs{background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(14px) saturate(175%);backdrop-filter:blur(14px) saturate(175%);border-bottom:1px solid rgba(255,255,255,.5);}
+
+  /* accordéon (fiches) en verre */
+  .pop-wrap.open .pop-cloud{background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(14px) saturate(175%);backdrop-filter:blur(14px) saturate(175%);border:1px solid rgba(255,255,255,.5);border-top:none;}
+  .pop-cloud a{border-bottom-color:rgba(255,255,255,.45);}
+  .pop-cloud a:hover{background:rgba(255,255,255,.6);}
+
+  /* cartes planning en verre */
+  .plan a,.plan .plan-soon{background-image:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 50%,rgba(255,255,255,.26));
+    background-color:rgba(255,255,255,.22);
+    -webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 5px 18px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.92);}
+
+  /* modale d'ajout de point en verre */
+  .pt-modal-card{background-image:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.45));
+    background-color:rgba(255,255,255,.55);
+    -webkit-backdrop-filter:blur(28px) saturate(190%);backdrop-filter:blur(28px) saturate(190%);
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 24px 60px rgba(15,23,42,.3),inset 0 1.5px 0 rgba(255,255,255,1);}
+  /* ===== Écran de connexion / demande d'accès (verre) ===== */
+  #authGate{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;
+    background:linear-gradient(160deg,rgba(238,241,247,.9),rgba(253,238,240,.9));
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);overflow:auto;}
+  #authGate .auth-card{width:100%;max-width:380px;border-radius:26px;padding:26px 22px;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.4));
+    background-color:rgba(255,255,255,.55);
+    -webkit-backdrop-filter:blur(28px) saturate(190%);backdrop-filter:blur(28px) saturate(190%);
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 24px 60px rgba(15,23,42,.28),inset 0 1.5px 0 rgba(255,255,255,1);}
+  #authGate .auth-logo{width:130px;aspect-ratio:460/319;margin:0 auto 6px;
+    background:linear-gradient(105deg,#9024FA,#C30067 52%,#C80E0E);
+    -webkit-mask:center/contain no-repeat;mask:center/contain no-repeat;}
+  #authGate h3{text-align:center;font-size:19px;font-weight:800;color:var(--anthracite);margin-bottom:3px;}
+  #authGate .auth-sub{text-align:center;font-size:12.5px;color:var(--texte2);margin-bottom:20px;}
+  #authGate label{display:block;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--texte2);margin:0 0 12px;}
+  #authGate input{display:block;width:100%;box-sizing:border-box;margin-top:6px;border:1px solid rgba(120,130,150,.3);
+    border-radius:11px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--anthracite);background:rgba(255,255,255,.7);
+    outline:none;transition:border-color .15s,box-shadow .15s;}
+  #authGate input:focus{border-color:var(--bleu);box-shadow:0 0 0 3px rgba(38,79,196,.16);}
+  #authGate .auth-btn{width:100%;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:15px;font-weight:800;
+    color:#fff;background:linear-gradient(105deg,#7a1fd6,#C30067 55%,#C80E0E);cursor:pointer;margin-top:4px;
+    box-shadow:0 6px 18px rgba(195,0,103,.3);transition:transform .12s,box-shadow .15s;}
+  #authGate .auth-btn:hover{transform:translateY(-1px);}
+  #authGate .auth-btn:disabled{opacity:.6;cursor:default;transform:none;}
+  #authGate .auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--texte2);}
+  #authGate .auth-switch a{color:var(--bleu);font-weight:700;cursor:pointer;text-decoration:none;}
+  #authGate .auth-msg{font-size:12.5px;font-weight:600;border-radius:9px;padding:9px 11px;margin-bottom:14px;display:none;}
+  #authGate .auth-msg.err{display:block;background:#fdecec;border:1px solid #f5c6c6;color:#b42318;}
+  #authGate .auth-msg.ok{display:block;background:#e9f7ef;border:1px solid #b7e4c7;color:#1a7f43;}
+  #authGate .auth-panel{display:none;}
+  #authGate .auth-panel.on{display:block;}
+  .logout-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:inherit;
+    font-size:11px;font-weight:700;padding:6px 11px;border-radius:20px;cursor:pointer;flex-shrink:0;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .15s;}
+  .logout-btn:hover{background:rgba(255,255,255,.32);}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -482,6 +601,74 @@
     else{ document.addEventListener('DOMContentLoaded', setLogo); }
   })();
 </script>
+<div class="app-bg" aria-hidden="true">
+  <svg viewBox="0 0 600 1000" preserveAspectRatio="xMidYMid slice">
+    <path class="b b1" pathLength="1000" d="M-40,230 C160,110 360,170 680,60"/>
+    <path class="b b2" pathLength="1000" d="M-40,420 C180,290 380,360 700,240"/>
+    <path class="b b3" pathLength="1000" d="M-60,620 C150,500 420,570 720,430"/>
+    <path class="b b4" pathLength="1000" d="M-60,820 C170,690 400,770 720,630"/>
+    <path class="g g1" pathLength="1000" d="M-40,230 C160,110 360,170 680,60"/>
+    <path class="g g2" pathLength="1000" d="M-60,620 C150,500 420,570 720,430"/>
+  </svg>
+</div>
+<div id="authGate">
+  <div class="auth-card">
+    <div class="auth-logo" id="authLogo" role="img" aria-label="SNCF Réseau"></div>
+
+    <!-- Connexion -->
+    <div class="auth-panel on" id="panelLogin">
+      <h3>Connexion</h3>
+      <div class="auth-sub">Portail Maintenance · Basse-Normandie</div>
+      <div class="auth-msg" id="loginMsg"></div>
+      <label>Adresse email
+        <input id="authEmail" type="email" autocomplete="username" placeholder="prenom.nom@reseau.sncf.fr">
+      </label>
+      <label>Mot de passe
+        <input id="authPw" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </label>
+      <button class="auth-btn" id="authLoginBtn" onclick="doLogin()">Se connecter</button>
+      <div class="auth-switch">Pas encore d'accès ? <a onclick="showGate('request')">Demander un accès</a></div>
+    </div>
+
+    <!-- Demande d'accès -->
+    <div class="auth-panel" id="panelRequest">
+      <h3>Demande d'accès</h3>
+      <div class="auth-sub">Votre demande sera validée par l'administrateur</div>
+      <div class="auth-msg" id="reqMsg"></div>
+      <div id="reqForm">
+        <label>Email professionnel
+          <input id="reqEmail" type="email" placeholder="prenom.nom@reseau.sncf.fr">
+        </label>
+        <label>Nom
+          <input id="reqNom" type="text" placeholder="Nom">
+        </label>
+        <label>Prénom
+          <input id="reqPrenom" type="text" placeholder="Prénom">
+        </label>
+        <label>Numéro de CP (matricule)
+          <input id="reqCp" type="text" placeholder="ex. 1234567A">
+        </label>
+        <button class="auth-btn" id="reqBtn" onclick="doRequest()">Envoyer ma demande</button>
+      </div>
+      <div class="auth-msg ok" id="reqDone" style="display:none;">✓ Demande envoyée. L'administrateur vous communiquera vos identifiants après validation.</div>
+      <div class="auth-switch"><a onclick="showGate('login')">← Retour à la connexion</a></div>
+    </div>
+
+    <!-- Changement de mot de passe (1re connexion) -->
+    <div class="auth-panel" id="panelPw">
+      <h3>Nouveau mot de passe</h3>
+      <div class="auth-sub">Pour votre première connexion, choisissez un mot de passe personnel</div>
+      <div class="auth-msg" id="pwMsg"></div>
+      <label>Nouveau mot de passe
+        <input id="newPw" type="password" autocomplete="new-password" placeholder="8 caractères minimum">
+      </label>
+      <label>Confirmer le mot de passe
+        <input id="newPw2" type="password" autocomplete="new-password" placeholder="Retapez le mot de passe" onkeydown="if(event.key==='Enter')doChangePw()">
+      </label>
+      <button class="auth-btn" id="pwBtn" onclick="doChangePw()">Valider et continuer</button>
+    </div>
+  </div>
+</div>
 <div class="app">
 
   <div class="topbar">
@@ -500,6 +687,7 @@
         </div>
       </div>
       <div class="ctx" id="ctxLabel">Accueil</div>
+      <button class="logout-btn" id="logoutBtn" onclick="doLogout()" style="display:none;">⏻ Déconnexion</button>
     </div>
   </div>
 
@@ -550,6 +738,7 @@
         <a class="row b-violet" href="https://interface-salarie.sncf.fr/accueil" target="_blank" rel="noopener noreferrer"><div class="ic">👤</div><div class="tx"><div class="lbl">OPTIM'SERVICES</div><div class="sub">Interface salarié</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-violet" href="https://sncf.sharepoint.com/:f:/s/infrapole_normandie_asti_telecomsGrpO365/IgCz06lHGpygQLrCFDEyXUTVAeCKH77P2zhjAIQQ_qZH6Pc?e=b2eYt5" target="_blank" rel="noopener noreferrer"><div class="ic">📋</div><div class="tx"><div class="lbl">Réunion de secteur</div><div class="sub">Comptes-rendus &amp; documents</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-violet" href="https://vigiexpress.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">🚆</div><div class="tx"><div class="lbl">VigiExpress</div><div class="sub">Sécurité</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-violet" href="https://stationc-formation.sncf.fr/Directory/Home.aspx?idPageData=10467508224" target="_blank" rel="noopener noreferrer"><div class="ic">🎓</div><div class="tx"><div class="lbl">Station C</div><div class="sub">Formation</div></div><span class="ext">↗ EXTERNE</span></a>
       </div>
     </div>
 
@@ -559,6 +748,7 @@
       <div class="group-title"><span class="dot"></span>Applications métier</div>
       <div class="list">
         <a class="row b-blue" href="https://monit-iv.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">📊</div><div class="tx"><div class="lbl">Monit-IV</div><div class="sub">Supervision</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-blue" href="https://uk.fusion.live/resources/jsps/pol/login/Logon.jsp" target="_blank" rel="noopener noreferrer"><div class="ic">🗂️</div><div class="tx"><div class="lbl">FusionLive</div><div class="sub">Gestion documentaire</div></div><span class="ext">↗ EXTERNE</span></a>
         <div class="row row-soon b-blue"><div class="ic">🗄️</div><div class="tx"><div class="lbl">Digidoc+</div><div class="sub">Gestion documentaire</div></div><span class="soon-badge">à venir</span></div>
         <div class="row row-soon b-blue"><div class="ic">🚗</div><div class="tx"><div class="lbl">Véhicule</div><div class="sub">Gestion du parc</div></div><span class="soon-badge">à venir</span></div>
         <div class="row row-soon b-red"><div class="ic">🛡️</div><div class="tx"><div class="lbl">Odin</div><div class="sub">Application métier</div></div><span class="soon-badge">à venir</span></div>
@@ -1845,6 +2035,85 @@
     sc.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     sc.querySelector('#'+pid).classList.add('active');
   }
+  // ============ AUTHENTIFICATION (Supabase Auth) ============
+  function _v(id){ var el=document.getElementById(id); return el?el.value:''; }
+  function _busy(id,on){ var b=document.getElementById(id); if(b){ b.disabled=on; b.dataset._t=b.dataset._t||b.textContent; b.textContent=on?'…':b.dataset._t; } }
+  function _msg(id,text,kind){ var m=document.getElementById(id); if(!m) return; m.textContent=text||''; m.className='auth-msg'+(text?(' '+(kind||'err')):''); }
+  function showGate(mode){
+    var g=document.getElementById('authGate'); if(g) g.style.display='flex';
+    document.body.classList.remove('authed');
+    var lb=document.getElementById('logoutBtn'); if(lb) lb.style.display='none';
+    ['panelLogin','panelRequest','panelPw'].forEach(function(p){ document.getElementById(p).classList.remove('on'); });
+    var map={login:'panelLogin',request:'panelRequest',pw:'panelPw'};
+    document.getElementById(map[mode]||'panelLogin').classList.add('on');
+  }
+  function hideGate(){
+    var g=document.getElementById('authGate'); if(g) g.style.display='none';
+    document.body.classList.add('authed');
+    var lb=document.getElementById('logoutBtn'); if(lb) lb.style.display='inline-block';
+  }
+  async function initAuth(){
+    // copie le logo (image blanche) comme masque coloré dans l'écran de connexion
+    try{ var s=document.querySelector('.sncf-logo'), d=document.getElementById('authLogo');
+      if(s&&d){ var u='url('+s.getAttribute('src')+')'; d.style.webkitMaskImage=u; d.style.maskImage=u; } }catch(e){}
+    if(!supaOk){ showGate('login'); _msg('loginMsg',"Service d'authentification indisponible pour le moment.",'err'); return; }
+    try{
+      const { data:{ session } } = await supa.auth.getSession();
+      if(session){ await afterLogin(); } else { showGate('login'); }
+    }catch(e){ showGate('login'); }
+    supa.auth.onAuthStateChange(function(event){ if(event==='SIGNED_OUT'){ showGate('login'); } });
+  }
+  async function afterLogin(){
+    let must=false;
+    try{
+      const { data:{ user } } = await supa.auth.getUser();
+      if(user){
+        const { data } = await supa.from('profiles').select('must_change_password').eq('id',user.id).maybeSingle();
+        must = !!(data && data.must_change_password);
+      }
+    }catch(e){}
+    if(must){ showGate('pw'); } else { hideGate(); }
+  }
+  async function doLogin(){
+    const email=_v('authEmail').trim().toLowerCase(), pw=_v('authPw');
+    if(!email||!pw){ _msg('loginMsg','Renseignez votre email et votre mot de passe.','err'); return; }
+    _busy('authLoginBtn',true);
+    const { error } = await supa.auth.signInWithPassword({ email:email, password:pw });
+    _busy('authLoginBtn',false);
+    if(error){ _msg('loginMsg','Email ou mot de passe incorrect.','err'); return; }
+    _msg('loginMsg','',''); await afterLogin();
+  }
+  async function doRequest(){
+    const email=_v('reqEmail').trim().toLowerCase(), cp=_v('reqCp').trim(), nom=_v('reqNom').trim(), prenom=_v('reqPrenom').trim();
+    if(!email||!cp||!nom||!prenom){ _msg('reqMsg','Tous les champs sont obligatoires.','err'); return; }
+    if(!/@reseau\.sncf\.fr$/.test(email)){ _msg('reqMsg','Utilisez votre adresse professionnelle @reseau.sncf.fr.','err'); return; }
+    if(!supaOk){ _msg('reqMsg','Service indisponible, réessayez plus tard.','err'); return; }
+    _busy('reqBtn',true);
+    const { error } = await supa.from('access_requests').insert({ email:email, cp:cp, nom:nom, prenom:prenom });
+    _busy('reqBtn',false);
+    if(error){ _msg('reqMsg','Envoi impossible : '+(error.message||''),'err'); return; }
+    _msg('reqMsg','','');
+    document.getElementById('reqForm').style.display='none';
+    document.getElementById('reqDone').style.display='block';
+  }
+  async function doChangePw(){
+    const p1=_v('newPw'), p2=_v('newPw2');
+    if(p1.length<8){ _msg('pwMsg','8 caractères minimum.','err'); return; }
+    if(p1!==p2){ _msg('pwMsg','Les deux mots de passe ne correspondent pas.','err'); return; }
+    _busy('pwBtn',true);
+    const { error } = await supa.auth.updateUser({ password:p1 });
+    if(!error){
+      try{ const { data:{ user } } = await supa.auth.getUser(); if(user) await supa.from('profiles').update({ must_change_password:false }).eq('id',user.id); }catch(e){}
+    }
+    _busy('pwBtn',false);
+    if(error){ _msg('pwMsg','Erreur : '+(error.message||''),'err'); return; }
+    hideGate();
+  }
+  async function doLogout(){
+    try{ if(supaOk) await supa.auth.signOut(); }catch(e){}
+    showGate('login');
+  }
+  initAuth();
 </script>
 </body>
 </html>
