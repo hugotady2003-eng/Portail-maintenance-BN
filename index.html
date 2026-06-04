@@ -565,9 +565,38 @@
   #authGate .auth-panel{display:none;}
   #authGate .auth-panel.on{display:block;}
   .logout-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:inherit;
-    font-size:11px;font-weight:700;padding:6px 11px;border-radius:20px;cursor:pointer;flex-shrink:0;
+    font-size:15px;font-weight:700;width:34px;height:34px;line-height:1;border-radius:50%;cursor:pointer;flex-shrink:0;
+    display:inline-flex;align-items:center;justify-content:center;
     -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .15s;}
   .logout-btn:hover{background:rgba(255,255,255,.32);}
+  /* badge de version dans le hero */
+  .ver-badge{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:11.5px;font-weight:800;
+    letter-spacing:.3px;color:#fff;cursor:pointer;border:none;border-radius:20px;padding:6px 13px;
+    background:linear-gradient(105deg,#7a1fd6,#C30067 60%,#C80E0E);box-shadow:0 4px 12px rgba(195,0,103,.28);
+    position:relative;z-index:2;transition:transform .12s,box-shadow .15s;}
+  .ver-badge::before{content:"✨";font-size:12px;}
+  .ver-badge:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(195,0,103,.36);}
+  /* page nouveautés */
+  .changelog{padding:16px 16px 30px;display:flex;flex-direction:column;gap:14px;}
+  .cl-card{position:relative;border-radius:18px;padding:16px 16px 14px;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.18) 55%,rgba(255,255,255,.28));
+    background-color:rgba(255,255,255,.24);
+    -webkit-backdrop-filter:blur(18px) saturate(185%);backdrop-filter:blur(18px) saturate(185%);
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 8px 24px rgba(15,23,42,.12),inset 0 1px 0 rgba(255,255,255,.92);}
+  .cl-card.latest{border:1.5px solid rgba(144,36,250,.4);box-shadow:0 12px 30px rgba(144,36,250,.18),inset 0 1px 0 rgba(255,255,255,.95);}
+  .cl-head{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap;}
+  .cl-ver{font-size:18px;font-weight:900;color:var(--anthracite);letter-spacing:-.3px;}
+  .cl-date{font-size:11.5px;font-weight:600;color:var(--texte2);}
+  .cl-new{font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#fff;
+    background:linear-gradient(105deg,#9024FA,#C30067);border-radius:20px;padding:3px 9px;}
+  .cl-list{display:flex;flex-direction:column;gap:8px;}
+  .cl-item{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.4;color:var(--texte);}
+  .cl-tag{flex-shrink:0;font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    border-radius:6px;padding:3px 7px;margin-top:1px;min-width:62px;text-align:center;}
+  .cl-tag.new{background:#eafaf0;color:#1a7f43;border:1px solid #b7e4c7;}
+  .cl-tag.fix{background:#fdeeee;color:#b42318;border:1px solid #f5c6c6;}
+  .cl-tag.ui {background:#f1ecfd;color:#7a1fd6;border:1px solid #d9c8f7;}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -687,7 +716,7 @@
         </div>
       </div>
       <div class="ctx" id="ctxLabel">Accueil</div>
-      <button class="logout-btn" id="logoutBtn" onclick="doLogout()" style="display:none;">⏻ Déconnexion</button>
+      <button class="logout-btn" id="logoutBtn" onclick="doLogout()" style="display:none;" title="Déconnexion" aria-label="Déconnexion">⏻</button>
     </div>
   </div>
 
@@ -712,6 +741,7 @@
       <div class="hello">Espace Maintenance</div>
       <h1>Accès rapide à vos outils</h1>
       <p>Sélectionnez une application ou une ressource</p>
+      <button class="ver-badge" onclick="go('changelog')" id="verBadge">v1.0 · Nouveautés</button>
     </div>
 
     <!-- Modules internes (sous-pages) -->
@@ -883,6 +913,18 @@
       <div class="lk lk-soon" style="--accent:var(--carmillon)"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go-soon">à venir</span></div>
       <a class="lk" style="--accent:var(--carmillon)" href="https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9/Code%20d%27acc%C3%A9s/Code_d%27acc%C3%A9s.xlsx?d=wafc1c76d91f94eac93b2b48fc9839793&csf=1&web=1&e=aybRkZ" target="_blank" rel="noopener noreferrer"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
     </div>
+  </div>
+
+
+  <!-- ============ NOUVEAUTÉS / CHANGELOG ============ -->
+  <div id="changelog" class="screen">
+    <div class="pagehead ph-violet">
+      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
+      <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
+      <h2>Nouveautés</h2>
+      <p>Historique des mises à jour &amp; correctifs</p>
+    </div>
+    <div class="changelog" id="changelogList"></div>
   </div>
 
 
@@ -1275,7 +1317,7 @@
     if(!confirm('Supprimer « '+nom+' » ? Cette action est partagée avec tous.')) return;
     const auteur = localStorage.getItem('bn_auteur') || promptAuteur();
     deletePoint(sid, currentCat.id, currentLine.id, nom, auteur).then(ok=>{
-      if(ok){ leafletMap.closePopup(); const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes; selectLine(currentLine.id, lignes); }
+      if(ok){ leafletMap.closePopup(); const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes; selectLine(currentLine.id, lignes, true); }
     });
   }
 
@@ -1284,7 +1326,7 @@
     const m=String(name).match(/PN\s+([0-9]+(?:[-\s][0-9A-Za-zé]+)?)/i);
     return m? m[1].trim() : null;
   }
-  function drawMarkers(pts){
+  function drawMarkers(pts, keepView){
     ensureMap();
     if(markerLayer){ leafletMap.removeLayer(markerLayer); }
     const isPN = currentCat && currentCat.id==='pn';
@@ -1316,7 +1358,7 @@
     });
     markerLayer.addTo(leafletMap);
     addGaresOverlay(currentLine&&currentLine.id);   // gares toujours visibles
-    leafletMap.fitBounds(latlngs, { padding:[30,30] });
+    if(!keepView){ leafletMap.fitBounds(latlngs, { padding:[30,30] }); }
     setTimeout(()=>leafletMap.invalidateSize(), 80);
   }
 
@@ -1386,13 +1428,13 @@
     const lignes = currentCat.national ? currentCat._regionLignes : currentCat.lignes;
     selectLine(lineId, lignes);
   }
-  async function selectLine(lineId, lignes){
+  async function selectLine(lineId, lignes, keepView){
     currentLine = lignes.find(x=>x.id===lineId) || lignes[0];
     document.querySelectorAll('#lineSelector .line-tab').forEach(b=>b.classList.toggle('active', b.dataset.id===currentLine.id));
     document.getElementById('accSearch').value='';
     // Mode Particularités locales : on dessine des tronçons colorés
     if(currentCat.segments){
-      drawSegments(currentLine.id);
+      drawSegments(currentLine.id, keepView);
       return;
     }
     // National : charge les points à la demande (avec cache)
@@ -1406,7 +1448,7 @@
       }finally{ showLoading(false); }
     }
     const pts=(currentLine.points)||[];
-    if(pts.length){ drawMarkers(pts); document.getElementById('accMap').style.display='block'; }
+    if(pts.length){ drawMarkers(pts, keepView); document.getElementById('accMap').style.display='block'; }
     else {
       // pas de points d'accès, mais on affiche quand même les gares de la ligne
       if(markerLayer){ try{markerLayer.clearLayers();}catch(e){} }
@@ -1415,7 +1457,7 @@
         ensureMap();
         document.getElementById('accMap').style.display='block';
         addGaresOverlay(currentLine.id);
-        leafletMap.fitBounds(gs.map(g=>[g.lat,g.lng]),{padding:[40,40]});
+        if(!keepView){ leafletMap.fitBounds(gs.map(g=>[g.lat,g.lng]),{padding:[40,40]}); }
         setTimeout(()=>leafletMap.invalidateSize(),80);
       } else {
         clearMap();
@@ -1797,7 +1839,10 @@
       }
       if(res.error) throw res.error;
       const arr=dataArrayFor(cat, ligne);
-      if(arr) arr.push({ n:nom, lat:lat, lng:lng, _sid:res.data.id, _user:true, _pk: pk||'' });
+      // garde anti-doublon : l'évènement temps réel a pu déjà l'ajouter
+      if(arr && !arr.some(x=>x._sid===res.data.id)){
+        arr.push({ n:nom, lat:lat, lng:lng, _sid:res.data.id, _user:true, _pk: pk||'' });
+      }
       logAction('ajout', cat, ligne, nom, lat, lng, auteur);
       return true;
     }catch(e){ supaDown("Ajout impossible, réessayez plus tard."); return false; }
@@ -1853,7 +1898,7 @@
     // rafraîchit si on regarde justement cette ligne/catégorie
     if(currentCat && currentLine && currentCat.id===p.categorie && currentLine.id===p.ligne){
       const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
-      selectLine(currentLine.id, lignes);
+      selectLine(currentLine.id, lignes, true);
     }
   }
 
@@ -1924,7 +1969,7 @@
         if(ok){
           closePtModal();
           const lignes=currentCat.national?(currentCat._regionLignes||[]):currentCat.lignes;
-          selectLine(currentLine.id, lignes);
+          selectLine(currentLine.id, lignes, true);
         } else { btn.disabled=false; }
       });
   }
@@ -1996,7 +2041,7 @@
     selectCat(accesCats[0].id);
   }
 
-    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code'};
+    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés'};
   function go(id){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -2035,7 +2080,35 @@
     sc.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     sc.querySelector('#'+pid).classList.add('active');
   }
-  // ============ AUTHENTIFICATION (Supabase Auth) ============
+  // ============ NOUVEAUTÉS / CHANGELOG ============
+  const APP_VERSION = "1.0";
+  const CHANGELOG = [
+    { v:"1.0", date:"Juin 2026", items:[
+      { t:"new", x:"Connexion sécurisée : écran de connexion, demande d'accès et changement de mot de passe à la première connexion." },
+      { t:"new", x:"Page « Nouveautés » pour suivre les mises à jour et correctifs." },
+      { t:"ui",  x:"Refonte « liquid glass » : panneaux et boutons translucides avec sillons SNCF animés en fond." },
+      { t:"ui",  x:"Écran de chargement avec logo SNCF qui se colore et reflet." },
+      { t:"new", x:"Accès : carte avec voies ferrées surlignées, ajout de point guidé avec saisie du PK, commentaires partagés." },
+      { t:"fix", x:"Ajout d'un point : plus de doublon et la carte ne se recentre plus toute seule." },
+      { t:"new", x:"Onglet « Administratif et sécurité » (EVS, OPTIMUM, OPTIM'SERVICES, Réunion de secteur, Station C, VigiExpress)." },
+      { t:"new", x:"Fiches Guides et liens Power-Switch, Monit-IV, FusionLive ajoutés." },
+    ]},
+  ];
+  function renderChangelog(){
+    const el=document.getElementById('changelogList'); if(!el) return;
+    el.innerHTML = CHANGELOG.map((rel,idx)=>{
+      const items = rel.items.map(it=>{
+        const lbl = it.t==='new'?'Nouveau':(it.t==='fix'?'Correctif':'Design');
+        return `<div class="cl-item"><span class="cl-tag ${it.t}">${lbl}</span><span>${it.x}</span></div>`;
+      }).join('');
+      return `<div class="cl-card${idx===0?' latest':''}">
+        <div class="cl-head"><span class="cl-ver">v${rel.v}</span><span class="cl-date">${rel.date}</span>${idx===0?'<span class="cl-new">Dernière version</span>':''}</div>
+        <div class="cl-list">${items}</div>
+      </div>`;
+    }).join('');
+  }
+  (function(){ var b=document.getElementById('verBadge'); if(b) b.textContent='v'+APP_VERSION+' · Nouveautés'; renderChangelog(); })();
+
   function _v(id){ var el=document.getElementById(id); return el?el.value:''; }
   function _busy(id,on){ var b=document.getElementById(id); if(b){ b.disabled=on; b.dataset._t=b.dataset._t||b.textContent; b.textContent=on?'…':b.dataset._t; } }
   function _msg(id,text,kind){ var m=document.getElementById(id); if(!m) return; m.textContent=text||''; m.className='auth-msg'+(text?(' '+(kind||'err')):''); }
@@ -2110,6 +2183,7 @@
     hideGate();
   }
   async function doLogout(){
+    if(!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return;
     try{ if(supaOk) await supa.auth.signOut(); }catch(e){}
     showGate('login');
   }
