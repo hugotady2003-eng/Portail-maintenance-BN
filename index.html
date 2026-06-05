@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  button,a,.row,.map-tab,.line-tab,.sub-btn{-webkit-tap-highlight-color:transparent;}
   :root{
     /* ===== Palette officielle SNCF Réseau ===== */
     --violet-elec:#9024FA;  --violet-elec-c:#AF80F2;
@@ -632,6 +633,163 @@
   .esc-cas b{color:var(--texte);font-weight:700;}
   .esc-crit{font-size:12.5px;color:var(--texte);line-height:1.5;}
   .esc-crit li{margin-bottom:4px;}
+  /* ===== Accès : cohérence verre + navigation carte ===== */
+  /* barres transparentes : les sillons du fond transparaissent comme sur l'accueil */
+  #acces .map-selector,#acces .line-selector,#acces #regionSelector,#acces .sub-toggle{
+    background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:none;}
+  /* pastilles en verre (état non-actif) */
+  #acces .map-tab:not(.active){background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.7);color:var(--texte2);
+    -webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);
+    box-shadow:0 3px 10px rgba(15,23,42,.08),inset 0 1px 0 rgba(255,255,255,.9);}
+  #acces .line-tab:not(.active),#acces .sub-btn:not(.active){background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.7);color:var(--texte2);
+    -webkit-backdrop-filter:blur(10px) saturate(175%);backdrop-filter:blur(10px) saturate(175%);
+    box-shadow:0 2px 8px rgba(15,23,42,.07),inset 0 1px 0 rgba(255,255,255,.9);}
+  /* états actifs (scopés sous #acces pour rester prioritaires et lisibles) */
+  #acces .map-tab.active{background:var(--bleu);border:1px solid var(--bleu);color:#fff;box-shadow:0 4px 14px rgba(38,79,196,.4);}
+  #acces .line-tab.active{background:var(--carmillon);border:1px solid var(--carmillon);color:#fff;box-shadow:0 4px 14px rgba(200,14,14,.35);}
+  #acces #regionSelector .line-tab.active{background:var(--bleu);border-color:var(--bleu);color:#fff;}
+  #acces .sub-btn.active{background:var(--bleu);border:1px solid var(--bleu);color:#fff;box-shadow:0 4px 14px rgba(38,79,196,.4);}
+  /* carte en "carte flottante" arrondie comme les panneaux de l'accueil */
+  #acces .map-wrap{margin:12px;border-radius:22px;overflow:hidden;
+    box-shadow:0 14px 38px rgba(15,23,42,.16),inset 0 1px 0 rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.5);}
+  #acces .leaflet-map{border-bottom:none;border-radius:22px;}
+  #acces .acc-legend{margin:0 12px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.55);
+    background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);
+    box-shadow:0 6px 18px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.85);}
+  /* barre d'outils flottante sur la carte */
+  .map-fab{position:absolute;right:12px;bottom:16px;z-index:600;display:flex;flex-direction:column;gap:9px;}
+  .map-fab-btn{width:46px;height:46px;border-radius:14px;border:1px solid rgba(255,255,255,.65);
+    background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.55));
+    -webkit-backdrop-filter:blur(14px) saturate(185%);backdrop-filter:blur(14px) saturate(185%);
+    box-shadow:0 6px 18px rgba(15,23,42,.22),inset 0 1px 0 rgba(255,255,255,.9);
+    cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;color:var(--anthracite);
+    transition:transform .12s,box-shadow .15s,background .15s,color .15s;}
+  .map-fab-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.28);}
+  .map-fab-btn:active{transform:scale(.93);}
+  .map-fab-btn.tracking,.map-fab-btn.on{background:linear-gradient(135deg,#16a85f,#0b8043);color:#fff;border-color:rgba(255,255,255,.5);}
+  .map-fab-btn.locating{animation:fabSpin 1s linear infinite;}
+  @keyframes fabSpin{to{transform:rotate(360deg);}}
+  /* barre recherche + tri */
+  #acces .acc-search-wrap{flex-wrap:wrap;}
+  .acc-sort{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--texte2);
+    background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.6);border-radius:10px;padding:9px 13px;cursor:pointer;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:all .15s;white-space:nowrap;}
+  .acc-sort:hover{border-color:var(--bleu);color:var(--bleu);}
+  .acc-sort.on{background:var(--bleu);border-color:var(--bleu);color:#fff;box-shadow:0 2px 8px rgba(38,79,196,.3);}
+  /* badge distance + copier coords */
+  .acc-dist{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:800;color:#0b8043;
+    background:#e7f6ee;border:1px solid #b7e4c7;border-radius:6px;padding:1px 7px;margin-right:7px;}
+  .acc-copy{margin-left:auto;background:none;border:none;color:var(--gris-clair);font-size:14px;cursor:pointer;padding:4px;border-radius:6px;flex-shrink:0;transition:color .15s,background .15s;}
+  .acc-copy:hover{color:var(--bleu);background:rgba(38,79,196,.08);}
+  .pop-copy{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:7px;background:#f4f6fb;color:var(--texte);border:1px solid var(--gris-bord);border-radius:9px;padding:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .pop-copy:hover{background:#e9edf6;}
+  .seg-safety{margin-top:8px;font-size:11.5px;line-height:1.4;color:#8a3a00;background:#fff4e6;border:1px solid #ffd8a8;border-radius:8px;padding:7px 9px;font-weight:600;}
+  .leg-intro{margin-top:9px;font-size:11px;line-height:1.45;color:var(--texte2);border-top:1px solid rgba(15,23,42,.08);padding-top:8px;}
+  /* recherche par ligne + PK */
+  .pk-search{margin:0 12px 12px;border-radius:16px;padding:12px;border:1px solid rgba(255,255,255,.6);
+    background-image:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.2));
+    background-color:rgba(255,255,255,.3);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);
+    box-shadow:0 6px 18px rgba(15,23,42,.1),inset 0 1px 0 rgba(255,255,255,.9);}
+  .pk-search-row{display:flex;gap:8px;}
+  .pk-in{flex:1;min-width:0;box-sizing:border-box;border:1px solid rgba(120,130,150,.3);border-radius:10px;
+    padding:10px 12px;font-family:inherit;font-size:14px;font-weight:600;color:var(--anthracite);background:rgba(255,255,255,.75);outline:none;transition:border-color .15s,box-shadow .15s;}
+  .pk-in:focus{border-color:var(--bleu);box-shadow:0 0 0 3px rgba(38,79,196,.14);}
+  .pk-in-line{flex:0 0 38%;}
+  .pk-go{flex:0 0 auto;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:14px;font-weight:800;
+    color:#fff;background:linear-gradient(105deg,var(--bleu),#1b3aa0);cursor:pointer;box-shadow:0 3px 10px rgba(38,79,196,.3);transition:transform .12s;}
+  .pk-go:hover{transform:translateY(-1px);}
+  .pk-hint{font-size:11px;color:var(--texte2);margin-top:8px;line-height:1.4;}
+  .pk-hint.err{color:#b42318;font-weight:600;}
+  .pk-hint.ok{color:#0b8043;font-weight:600;}
+  /* repères PK le long de la ligne — discrets, visibles seulement en zoomant */
+  .pk-tick{pointer-events:none;display:flex;align-items:center;justify-content:center;}
+  .pk-tick-lbl{font-size:10px;font-weight:800;color:#1b3aa0;background:rgba(255,255,255,.88);
+    border:1px solid rgba(38,79,196,.4);border-radius:5px;padding:0 4px;line-height:14px;white-space:nowrap;
+    opacity:0;transition:opacity .2s;box-shadow:0 1px 3px rgba(15,23,42,.18);}
+  .leaflet-map.show-pk .pk-tick-lbl{opacity:.96;}
+  /* ===== Rappels en gare ===== */
+  .rap-home-badge{background:var(--carmillon)!important;border-color:var(--carmillon)!important;color:#fff!important;min-width:20px;justify-content:center;}
+  /* point rouge de notification sur le bouton Rappels */
+  .rap-dot{position:absolute;top:11px;left:50px;width:11px;height:11px;border-radius:50%;background:var(--carmillon);
+    border:2px solid #fff;z-index:3;box-shadow:0 1px 3px rgba(195,0,103,.5);}
+  .rap-dot::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--carmillon);opacity:.55;animation:rapPulse 1.9s ease-out infinite;}
+  @keyframes rapPulse{0%{transform:scale(1);opacity:.55;}70%{transform:scale(2);opacity:0;}100%{opacity:0;}}
+  .rap-toolbar{display:flex;gap:9px;align-items:center;padding:14px 16px 6px;}
+  .rap-create{flex:1;border:none;border-radius:13px;padding:13px;font-family:inherit;font-size:14.5px;font-weight:800;color:#fff;
+    background:linear-gradient(105deg,var(--violet-elec),var(--violet-vin));cursor:pointer;box-shadow:0 4px 14px rgba(144,36,250,.32);transition:transform .12s;}
+  .rap-create:hover{transform:translateY(-1px);}
+  /* bascule verre liquide : Avec rappels / Toutes les gares */
+  .rap-seg-wrap{padding:8px 16px 2px;}
+  .rap-seg{position:relative;display:flex;width:100%;border-radius:15px;padding:4px;-webkit-tap-highlight-color:transparent;
+    background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.65);
+    -webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 3px 10px rgba(15,23,42,.1);}
+  .rap-seg-btn{position:relative;z-index:2;flex:1 1 0;border:none;background:transparent;font-family:inherit;
+    font-size:13px;font-weight:800;color:var(--texte2);padding:9px 8px;border-radius:11px;cursor:pointer;
+    white-space:nowrap;transition:color .25s;-webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;user-select:none;outline:none;-webkit-appearance:none;appearance:none;}
+  .rap-seg-btn:focus,.rap-seg-btn:focus-visible,.rap-seg-btn:active{background:transparent;outline:none;box-shadow:none;}
+  .rap-seg-btn.active{color:var(--violet-vin);}
+  .rap-seg-pill{position:absolute;z-index:1;top:4px;left:4px;bottom:4px;width:calc(50% - 4px);border-radius:11px;
+    background:linear-gradient(150deg,rgba(255,255,255,.99),rgba(255,255,255,.74));
+    -webkit-backdrop-filter:blur(8px) saturate(160%);backdrop-filter:blur(8px) saturate(160%);
+    box-shadow:0 4px 12px rgba(144,36,250,.26),inset 0 1px 0 #fff,inset 0 -1px 2px rgba(144,36,250,.08),0 0 0 1px rgba(144,36,250,.1);
+    transition:transform .42s cubic-bezier(.32,1.5,.45,1);}
+  .rap-seg-pill::after{content:"";position:absolute;left:8%;right:8%;top:2px;height:38%;border-radius:9px;
+    background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0));pointer-events:none;}
+  .rap-seg.on-all .rap-seg-pill{transform:translateX(100%);}
+  /* barre de progression du temps restant */
+  .rap-prog-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:11px;}
+  .rap-prog-label{font-weight:800;}
+  .rap-prog-due{color:var(--texte2);font-weight:700;}
+  .rap-green{color:#0b8043;} .rap-orange{color:#c2410c;} .rap-red{color:#b42318;}
+  .rap-prog{height:7px;border-radius:5px;background:rgba(15,23,42,.09);overflow:hidden;margin-top:5px;}
+  .rap-prog-fill{height:100%;border-radius:5px;transition:width .5s ease;}
+  .rap-fill-green{background:linear-gradient(90deg,#16a85f,#0b8043);}
+  .rap-fill-orange{background:linear-gradient(90deg,#f59e0b,#d97706);}
+  .rap-fill-red{background:linear-gradient(90deg,#ef4444,#b42318);}
+  .rap-search-wrap{padding:8px 16px 4px;display:flex;}
+  .rap-list{padding:10px 16px 28px;display:flex;flex-direction:column;gap:11px;}
+  .rap-gare{border-radius:16px;border:1px solid rgba(255,255,255,.6);overflow:hidden;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));background-color:rgba(255,255,255,.4);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);
+    box-shadow:0 6px 18px rgba(15,23,42,.09),inset 0 1px 0 rgba(255,255,255,.85);}
+  .rap-gare-head{display:flex;align-items:center;gap:11px;padding:14px 15px;cursor:pointer;}
+  .rap-gare-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;
+    background:rgba(144,36,250,.1);color:var(--violet-elec);flex-shrink:0;}
+  .rap-gare-info{flex:1;min-width:0;}
+  .rap-gare-name{font-size:14.5px;font-weight:800;color:var(--anthracite);}
+  .rap-gare-sub{font-size:11.5px;color:var(--texte2);margin-top:1px;}
+  .rap-count-badge{flex-shrink:0;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--carmillon);color:#fff;
+    font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(195,0,103,.35);}
+  .rap-chev{flex-shrink:0;color:var(--gris-clair);transition:transform .2s;}
+  .rap-gare.open .rap-chev{transform:rotate(90deg);}
+  .rap-gare-body{display:none;padding:0 13px 13px;flex-direction:column;gap:9px;}
+  .rap-gare.open .rap-gare-body{display:flex;}
+  .rap-item{border-radius:12px;border:1px solid var(--gris-bord);background:#fff;padding:11px 12px;}
+  .rap-item-top{display:flex;align-items:flex-start;gap:8px;}
+  .rap-item-title{flex:1;font-size:13.5px;font-weight:800;color:var(--anthracite);line-height:1.3;}
+  .rap-item-text{font-size:12.5px;color:var(--texte);margin-top:5px;line-height:1.45;white-space:pre-wrap;}
+  .rap-item-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:11px;}
+  .rap-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gris-bg);border:1px solid var(--gris-bord);border-radius:7px;padding:2px 7px;font-weight:700;color:var(--texte2);}
+  .rap-chip.late{background:#fdecec;border-color:#f5b5b5;color:#b42318;}
+  .rap-chip.who{background:#f0eafe;border-color:#d9c6fb;color:var(--violet-vin);}
+  .rap-done-btn{margin-top:10px;width:100%;border:1px solid var(--vert-trefle);background:#e7f6ee;color:#0b8043;border-radius:9px;padding:8px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .rap-done-btn:hover{background:#d6efe1;}
+  .rap-item.done{background:#f4f5f7;border-color:#e2e5ea;opacity:.78;}
+  .rap-item.done .rap-item-title{color:var(--texte2);text-decoration:line-through;}
+  .rap-done-info{margin-top:8px;font-size:11.5px;color:#0b8043;font-weight:700;}
+  .rap-done-comment{margin-top:3px;font-size:11.5px;color:var(--texte2);font-style:italic;}
+  .rap-empty-body{font-size:12px;color:var(--texte2);padding:2px 2px 4px;}
+  /* champs du modal */
+  .rap-lbl{display:block;font-size:11.5px;font-weight:800;color:var(--texte2);margin:11px 0 4px;text-transform:uppercase;letter-spacing:.4px;}
+  .rap-input{width:100%;box-sizing:border-box;border:1px solid var(--gris-bord);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:14px;color:var(--anthracite);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;}
+  .rap-input:focus{border-color:var(--violet-elec);box-shadow:0 0 0 3px rgba(144,36,250,.13);}
+  .rap-textarea{resize:vertical;min-height:72px;line-height:1.4;}
+  .rap-msg{font-size:12px;margin-top:9px;min-height:14px;}
+  .rap-msg.err{color:#b42318;font-weight:600;}
+  .rap-msg.ok{color:#0b8043;font-weight:600;}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -784,8 +942,10 @@
       <div class="group-sillon" aria-hidden="true"><svg viewBox="0 0 400 80" preserveAspectRatio="xMaxYMin slice"><path d="M-10,68 C120,28 260,50 460,6"/><path d="M20,84 C150,48 300,64 480,20" style="animation-delay:.22s"/></svg></div>
       <div class="group-title"><span class="dot"></span>Espaces &amp; ressources</div>
       <div class="list">
+        <div class="row b-violet" id="adminRow" style="display:none" onclick="go('adminreq')"><div class="ic">🛂</div><div class="tx"><div class="lbl">Demandes d'accès</div><div class="sub">Validation des nouveaux utilisateurs</div></div><span class="ext" id="adminCount">0</span></div>
         <div class="row b-blue"   onclick="go('maintenance')"><div class="ic">📁</div><div class="tx"><div class="lbl">Maintenance / Docs</div><div class="sub">BN · Docs · Fiches Guides · Réseau BN TEL EXT</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="row b-anthra" onclick="go('acces')"><div class="ic">📍</div><div class="tx"><div class="lbl">Accès</div><div class="sub">Carte des accès · Itinéraire Maps &amp; Waze</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="row b-violet" onclick="go('rappels')"><div class="ic">📝</div><span class="rap-dot" id="rappelHomeDot" style="display:none"></span><div class="tx"><div class="lbl">Rappels</div><div class="sub">Choses à faire en gare · partagé</div></div><span class="ext rap-home-badge" id="rappelHomeBadge" style="display:none">0</span></div>
         <div class="row b-red"    onclick="go('powerswitch')"><div class="ic">⚡</div><div class="tx"><div class="lbl">Power-Switch</div><div class="sub">Carte · Login &amp; mot de passe</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="row b-anthra" onclick="go('planning')"><div class="ic">📅</div><div class="tx"><div class="lbl">Planning</div><div class="sub">Années 2025 &amp; 2026</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="row b-red"    onclick="go('astreinte')"><div class="ic">🔐</div><div class="tx"><div class="lbl">Astreinte / Code d'accès</div><div class="sub">Numéro d'astreinte · Code d'accès</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
@@ -873,10 +1033,22 @@
     <div class="map-wrap">
       <div id="accMap" class="leaflet-map"></div>
       <div id="mapEditOverlay" class="map-edit-overlay" style="display:none;"><span class="tap-dot"></span>Touchez la carte à l'endroit de l'accès</div>
+      <div class="map-fab">
+        <button class="map-fab-btn" id="fabLocate" onclick="locateMe()" title="Ma position">📍</button>
+        <button class="map-fab-btn" id="fabFit" onclick="fitToPoints()" title="Voir tous les points">⤢</button>
+        <button class="map-fab-btn" id="fabEdit" onclick="toggleEdit()" title="Modifier les points">✏️</button>
+      </div>
     </div>
-    <button id="locateBtn" class="locate-btn" onclick="locateMe()" title="Ma position">📍 Activer ma position</button>
-    <button id="editBtn" class="edit-btn" onclick="toggleEdit()">✏️ Modifier les points</button>
     <div id="editHint" class="edit-hint" style="display:none;">✏️ <b>Mode édition activé.</b> Touchez la carte à l'endroit voulu pour <b>ajouter un point</b> (vous pourrez saisir son nom et son PK). Pour <b>supprimer</b>, ouvrez un point ajouté puis « Supprimer ». Les modifications sont partagées avec tous.</div>
+    <!-- Recherche par ligne + PK -->
+    <div class="pk-search" id="pkSearch">
+      <div class="pk-search-row">
+        <input id="pkLine" class="pk-in pk-in-line" type="text" inputmode="numeric" placeholder="Ligne (ex. 395000)">
+        <input id="pkVal" class="pk-in pk-in-pk" type="text" inputmode="numeric" placeholder="PK (ex. 230+413)">
+        <button class="pk-go" onclick="searchByPk()">Aller</button>
+      </div>
+      <div class="pk-hint" id="pkHint">Indiquez la ligne et le PK : le point d'accès le plus proche sur cette ligne sera localisé.</div>
+    </div>
     <!-- Légende des particularités locales -->
     <div id="accLegend" class="acc-legend" style="display:none;"></div>
 
@@ -884,6 +1056,7 @@
 
     <div class="acc-search-wrap" id="accSearchWrap">
       <input id="accSearch" class="acc-search" type="search" placeholder="🔍 Rechercher un site…" oninput="renderAccList()">
+      <button id="sortBtn" class="acc-sort" onclick="toggleSort()" title="Trier par proximité">↕ Proximité</button>
       <span class="acc-count" id="accCount"></span>
     </div>
 
@@ -960,6 +1133,67 @@
       <p>Historique des mises à jour &amp; correctifs</p>
     </div>
     <div class="changelog" id="changelogList"></div>
+  </div>
+
+
+  <!-- ============ DEMANDES D'ACCÈS (ADMIN) ============ -->
+  <div id="adminreq" class="screen">
+    <div class="pagehead ph-violet">
+      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
+      <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
+      <h2>Demandes d'accès</h2>
+      <p>Validation des nouveaux utilisateurs</p>
+    </div>
+    <div style="padding:14px 16px 6px;display:flex;gap:8px;align-items:center;">
+      <button class="acc-sort" onclick="loadAccessRequests()">⟳ Actualiser</button>
+      <button class="acc-sort" id="reqFilterBtn" onclick="toggleReqFilter()">En attente</button>
+    </div>
+    <div class="infosheet" id="adminReqList"><div class="acc-empty">Chargement…</div></div>
+  </div>
+
+
+  <!-- ============ RAPPELS EN GARE ============ -->
+  <div id="rappels" class="screen">
+    <div class="pagehead ph-violet">
+      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
+      <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
+      <h2>Rappels</h2>
+      <p>Choses à faire en gare &middot; partagé entre tous</p>
+    </div>
+    <div class="rap-toolbar">
+      <button class="rap-create" onclick="openRappelModal()">＋ Créer un rappel</button>
+    </div>
+    <div class="rap-seg-wrap">
+      <div class="rap-seg" id="rapSeg">
+        <button class="rap-seg-btn active" onclick="setRapFilter('with')">Avec rappels</button>
+        <button class="rap-seg-btn" onclick="setRapFilter('all')">Toutes les gares</button>
+        <span class="rap-seg-pill"></span>
+      </div>
+    </div>
+    <div class="rap-search-wrap">
+      <input id="rapSearch" class="acc-search" type="search" placeholder="🔍 Rechercher une gare…" oninput="renderRappels()">
+    </div>
+    <div class="rap-list" id="rappelList"><div class="acc-empty">Chargement…</div></div>
+  </div>
+
+  <!-- Modal création de rappel -->
+  <div id="rapModal" class="pt-modal" style="display:none;">
+    <div class="pt-modal-card">
+      <div class="pt-modal-title">Nouveau rappel</div>
+      <label class="rap-lbl">Gare concernée</label>
+      <select id="rapGare" class="rap-input"></select>
+      <label class="rap-lbl">Titre du rappel</label>
+      <input id="rapTitre" class="rap-input" type="text" placeholder="Ex. Vérifier l'armoire BT" maxlength="80">
+      <label class="rap-lbl">Description</label>
+      <textarea id="rapTexte" class="rap-input rap-textarea" placeholder="Décrivez ce qu'il y a à faire…" maxlength="500"></textarea>
+      <label class="rap-lbl">Date limite</label>
+      <input id="rapDate" class="rap-input" type="date">
+      <div id="rapMsg" class="rap-msg"></div>
+      <div class="pt-modal-btns">
+        <button class="pt-cancel" onclick="closeRappelModal()">Annuler</button>
+        <button class="pt-ok" id="rapOkBtn" onclick="confirmRappel()">Créer</button>
+      </div>
+    </div>
   </div>
 
 
@@ -1505,8 +1739,40 @@
     });
     markerLayer.addTo(leafletMap);
     addGaresOverlay(currentLine&&currentLine.id);   // gares toujours visibles
+    buildPkTicks(pts);                              // repères PK discrets (visibles en zoomant)
     if(!keepView){ leafletMap.fitBounds(latlngs, { padding:[30,30] }); }
     setTimeout(()=>leafletMap.invalidateSize(), 80);
+  }
+
+  // ===== Repères PK le long de la ligne (discrets, apparaissent en zoomant) =====
+  let pkTickLayer=null;
+  function clearPkTicks(){ if(pkTickLayer){ try{leafletMap.removeLayer(pkTickLayer);}catch(e){} pkTickLayer=null; } leafletMap&&leafletMap.off('zoomend', updatePkTicksVis); }
+  function buildPkTicks(pts){
+    clearPkTicks();
+    if(!leafletMap || !pts || !pts.length) return;
+    // un repère par kilomètre entier, en prenant le point connu le plus proche de ce PK
+    const withPk=pts.map(p=>({p,m:pointPkMeters(p)})).filter(o=>o.m!=null);
+    if(withPk.length<2) return;
+    const byKm={};
+    withPk.forEach(o=>{
+      const km=Math.round(o.m/1000);
+      if(!byKm[km] || Math.abs(o.m-km*1000)<Math.abs(byKm[km].m-km*1000)) byKm[km]=o;
+    });
+    pkTickLayer=L.layerGroup();
+    Object.keys(byKm).forEach(km=>{
+      const o=byKm[km];
+      const ic=L.divIcon({className:'pk-tick', html:'<span class="pk-tick-lbl">'+km+'</span>', iconSize:[30,16], iconAnchor:[15,8]});
+      pkTickLayer.addLayer(L.marker([o.p.lat,o.p.lng],{icon:ic,interactive:false,keyboard:false,zIndexOffset:-200}));
+    });
+    pkTickLayer.addTo(leafletMap);
+    leafletMap.off('zoomend', updatePkTicksVis);
+    leafletMap.on('zoomend', updatePkTicksVis);
+    updatePkTicksVis();
+  }
+  function updatePkTicksVis(){
+    const el=document.getElementById('accMap'); if(!el || !leafletMap) return;
+    // n'afficher les PK qu'à partir d'un certain zoom pour rester discret
+    el.classList.toggle('show-pk', leafletMap.getZoom()>=11);
   }
 
   // ---- Sélecteur de TYPE (catégorie) ----
@@ -1662,6 +1928,37 @@
     return {color:st.color, dash:st.dashArray, lbl:(st.label||v)};
   }
   const MODE_LABEL={vitesse:'Vitesse max',regime:'Régime',canton:'Cantonnement',partic:'Particularité'};
+  // Explication de chaque mode (affichée en tête de légende)
+  const MODE_INTRO={
+    vitesse:"Vitesse maximale nominale autorisée sur le tronçon. À adapter selon la signalisation, les ralentissements temporaires (LTV) et les consignes en vigueur.",
+    regime:"Régime d'exploitation de la voie : il définit les règles de circulation applicables et le niveau d'équipement de sécurité de la ligne.",
+    canton:"Mode d'espacement des trains (cantonnement) : il garantit la distance de sécurité entre deux circulations successives.",
+    partic:"Particularités d'exploitation du tronçon pouvant impacter la sécurité et la conduite."
+  };
+  // Note de sécurité contextualisée selon la valeur
+  function safetyNote(mode, v){
+    if(mode==='vitesse'){
+      const n=parseInt(v,10)||0;
+      if(n>=200) return "Ligne à grande vitesse : intervalles de sécurité accrus, accès strictement réglementé.";
+      if(n>=160) return "Vitesse élevée : délais d'annonce et distances d'arrêt importants — vigilance accrue aux abords de la voie.";
+      if(n<=80)  return "Vitesse réduite : souvent lié à un tracé contraint, des PN ou des zones sensibles.";
+      return "Respecter la signalisation latérale et les éventuels ralentissements temporaires.";
+    }
+    const s=String(v||'').toLowerCase();
+    if(mode==='canton'){
+      if(s.includes('automatique')) return "Cantonnement automatique : espacement géré par la signalisation. Ne jamais franchir un signal fermé.";
+      if(s.includes('manuel')||s.includes('cantonnement téléphonique')||s.includes('bmvu')) return "Espacement géré manuellement : dépend des annonces entre postes — vigilance renforcée.";
+      return "Vérifier le mode d'espacement avant toute intervention sur ou près de la voie.";
+    }
+    if(mode==='regime'){
+      if(s.includes('banalis')) return "Voie banalisée : circulation possible dans les deux sens — vérifier le sens avant tout accès.";
+      if(s.includes('double')) return "Double voie : un train peut survenir sur la voie contiguë — toujours se garer côté opposé aux circulations.";
+      if(s.includes('unique')) return "Voie unique : circulation dans les deux sens sur la même voie — annonce indispensable.";
+      return "Identifier le régime avant intervention et appliquer les mesures de protection adaptées.";
+    }
+    return "Tronçon à particularité : se référer à la consigne locale avant intervention.";
+  }
+
 
   function drawSegments(lineId, keepView){
     ensureMap();
@@ -1669,6 +1966,7 @@
     clearSegments();
     document.getElementById('accMap').style.display='block';
     document.getElementById('accSearchWrap').style.display='none';
+    var _pk=document.getElementById('pkSearch'); if(_pk) _pk.style.display='none';
     document.getElementById('accList').innerHTML='';
 
     const src = {vitesse:vitData, regime:regData, canton:cantonData, partic:particData}[localMode] || vitData;
@@ -1679,9 +1977,10 @@
       if(!seg.poly || !seg.poly.length) return;
       const st=styleFor(localMode, seg.v);
       const pl=L.polyline(seg.poly,{color:st.color,weight:5,opacity:0.9,dashArray:st.dash});
-      pl.bindPopup('<div class="pop-name">Ligne '+lineId+'</div><div style="font-size:12px">'+
-                   MODE_LABEL[localMode]+' : <b>'+st.lbl+'</b></div>'+
-                   '<div style="font-size:11px;color:#5a6571;margin-top:4px">PK '+seg.pkd+' → '+seg.pkf+'</div>');
+      pl.bindPopup('<div class="pop-name">Ligne '+lineId+'</div>'+
+                   '<div style="font-size:12px">'+MODE_LABEL[localMode]+' : <b>'+st.lbl+'</b></div>'+
+                   '<div style="font-size:11px;color:#5a6571;margin-top:4px">PK '+seg.pkd+' → '+seg.pkf+'</div>'+
+                   '<div class="seg-safety">⚠️ '+escHtml(safetyNote(localMode, seg.v))+'</div>');
       segmentLayer.addLayer(pl);
       seg.poly.forEach(p=>allpts.push(p));
     });
@@ -1716,7 +2015,7 @@
           const dash=st.dashArray?'border-top:3px dashed '+st.color+';background:none;height:0':'background:'+st.color;
           return '<span class="leg-item"><span class="leg-line" style="'+dash+'"></span>'+(st.label||k)+'</span>';}).join('')+'</div>';
     }
-    el.innerHTML=html;
+    el.innerHTML=html + '<div class="leg-intro">'+escHtml(MODE_INTRO[localMode]||'')+'</div>';
     el.style.display='block';
   }
 
@@ -1725,9 +2024,10 @@
   function clearGares(){ if(garesLayer){ try{leafletMap.removeLayer(garesLayer);}catch(e){} garesLayer=null; } }
 
   // ===== GÉOLOCALISATION : suivi en direct de la position =====
-  let userMarker=null, userCircle=null, watchId=null, firstFix=true;
+  let userMarker=null, userCircle=null, watchId=null, firstFix=true, userLatLng=null;
   function renderUserPos(pos){
     const lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy||50;
+    userLatLng=[lat,lng];
     ensureMap();
     const ic=L.divIcon({className:'user-marker',html:'<div class="user-dot"></div>',iconSize:[18,18],iconAnchor:[9,9]});
     if(!userMarker){ userMarker=L.marker([lat,lng],{icon:ic,zIndexOffset:2000}).bindPopup('<b>Ma position</b>').addTo(leafletMap); }
@@ -1735,23 +2035,22 @@
     if(!userCircle){ userCircle=L.circle([lat,lng],{radius:acc,color:'#1a73e8',fillColor:'#1a73e8',fillOpacity:0.12,weight:1}).addTo(leafletMap); }
     else { userCircle.setLatLng([lat,lng]); userCircle.setRadius(acc); }
     if(firstFix){ leafletMap.setView([lat,lng], 14, {animate:true}); firstFix=false; setTimeout(()=>leafletMap.invalidateSize(),80); }
+    renderAccList(); // met à jour les distances
   }
   function startTracking(){
     if(!navigator.geolocation){ return; }
-    const btn=document.getElementById('locateBtn');
+    const btn=document.getElementById('fabLocate');
     if(watchId!==null){
-      // déjà actif → on recentre simplement
       if(userMarker){ leafletMap.setView(userMarker.getLatLng(), Math.max(leafletMap.getZoom(),14), {animate:true}); }
       return;
     }
-    if(btn){ btn.textContent='⏳ Localisation…'; }
+    if(btn){ btn.classList.add('locating'); }
     firstFix=true;
     watchId=navigator.geolocation.watchPosition(function(pos){
       renderUserPos(pos);
-      if(btn){ btn.textContent='📍 Recentrer sur ma position'; btn.classList.add('tracking'); }
+      if(btn){ btn.classList.remove('locating'); btn.classList.add('tracking'); }
     }, function(err){
-      if(btn){ btn.textContent='📍 Ma position'; btn.classList.remove('tracking'); }
-      if(err.code===1 && firstFix){ /* refus : on n'alerte qu'une fois */ }
+      if(btn){ btn.classList.remove('locating','tracking'); }
     }, { enableHighAccuracy:true, timeout:15000, maximumAge:5000 });
   }
   function stopTracking(){
@@ -1759,6 +2058,99 @@
   }
   // clic = recentrer (le suivi tourne déjà en fond)
   function locateMe(){ startTracking(); if(userMarker){ leafletMap.setView(userMarker.getLatLng(), Math.max(leafletMap.getZoom(),14), {animate:true}); } }
+  // recentrer la carte sur tous les points de la ligne
+  function fitToPoints(){
+    if(!leafletMap) return;
+    const pts=(currentLine && currentLine.points)||[];
+    if(pts.length){ leafletMap.fitBounds(pts.map(p=>[p.lat,p.lng]),{padding:[40,40]}); return; }
+    const gs=(currentLine && garesData[currentLine.id])||[];
+    if(gs.length){ leafletMap.fitBounds(gs.map(g=>[g.lat,g.lng]),{padding:[40,40]}); }
+  }
+  // distance à vol d'oiseau (Haversine) en mètres
+  function distM(a,b,c,d){
+    const R=6371000, t=Math.PI/180;
+    const dLat=(c-a)*t, dLng=(d-b)*t;
+    const x=Math.sin(dLat/2)**2 + Math.cos(a*t)*Math.cos(c*t)*Math.sin(dLng/2)**2;
+    return 2*R*Math.asin(Math.sqrt(x));
+  }
+  function fmtDist(m){ return m<1000 ? Math.round(m)+' m' : (m/1000).toFixed(m<10000?1:0)+' km'; }
+  // --- Recherche par ligne + PK ---
+  // Convertit un PK "230+413" (ou "230", "230 413", "230+4") en mètres depuis l'origine
+  function pkToMeters(str){
+    if(str==null) return null;
+    let s=String(str).replace(/\s+/g,'');
+    // formats acceptés : "230+413", "230.413", "230,413", "230"
+    const m=s.match(/(\d+)(?:[+.,](\d{1,3}))?/);
+    if(!m) return null;
+    const km=parseInt(m[1],10)||0;
+    let hm=m[2]?m[2]:'0';
+    // "413" => 413 m ; "4" => 400 m ; "41" => 410 m
+    hm=(hm+'00').slice(0,3);
+    return km*1000 + (parseInt(hm,10)||0);
+  }
+  // Extrait le PK (en mètres) d'un point : son champ _pk, sinon depuis son nom ("... PK 217+981")
+  function pointPkMeters(p){
+    if(p._pk){ const v=pkToMeters(p._pk); if(v!=null) return v; }
+    const name=String(p.n||'');
+    // format avec mot-clé : "... PK 217+981"
+    let m=name.match(/PK\s*(\d+(?:[+.,]\d{1,3})?)/i);
+    if(m){ const v=pkToMeters(m[1]); if(v!=null) return v; }
+    // format "Accès voies" : "<ligne>-<voie> <km>[+<hm>] [libellé]"  ex. "366000-1 190+010 D PL"
+    m=name.match(/-\d+\s+(\d{1,3}(?:[+]\d{1,3})?)/);
+    if(m){ const v=pkToMeters(m[1]); if(v!=null) return v; }
+    return null;
+  }
+  function searchByPk(){
+    const hint=document.getElementById('pkHint');
+    const setHint=(t,k)=>{ hint.textContent=t; hint.className='pk-hint'+(k?(' '+k):''); };
+    const line=(document.getElementById('pkLine').value||'').trim();
+    const pkStr=(document.getElementById('pkVal').value||'').trim();
+    if(!line){ setHint('Indiquez d\'abord le numéro de ligne.','err'); return; }
+    const target=pkToMeters(pkStr);
+    if(target==null){ setHint('PK invalide. Exemple : 230+413.','err'); return; }
+    // se placer sur la bonne ligne
+    const lignes = currentCat && currentCat.national ? (currentCat._regionLignes||[]) : (currentCat?currentCat.lignes:[]);
+    const exists = lignes.find(l=>String(l.id)===line);
+    const proceed = ()=>{
+      const pts=(currentLine && currentLine.points)||[];
+      const withPk=pts.map(p=>({p,m:pointPkMeters(p)})).filter(o=>o.m!=null);
+      if(!withPk.length){ setHint('Aucun point avec PK connu sur la ligne '+line+'.','err'); return; }
+      withPk.sort((a,b)=>Math.abs(a.m-target)-Math.abs(b.m-target));
+      const best=withPk[0];
+      const diff=Math.abs(best.m-target);
+      const idx=pts.indexOf(best.p);
+      focusPoint(idx);
+      const dkm=(diff/1000); const dtxt=diff<1000?Math.round(diff)+' m':dkm.toFixed(dkm<10?1:0)+' km';
+      setHint('Point le plus proche : « '+best.p.n+' » (à ~'+dtxt+' du PK demandé).','ok');
+    };
+    if(currentLine && String(currentLine.id)===line){ proceed(); return; }
+    if(!exists){
+      setHint('Ligne '+line+' introuvable dans la catégorie courante. Vérifiez la catégorie / région.','err');
+      return;
+    }
+    setHint('Chargement de la ligne '+line+'…','');
+    Promise.resolve(selectLine(line, lignes)).then(()=>setTimeout(proceed,250));
+  }
+  // tri par proximité
+  let sortByDist=false;
+  function toggleSort(){
+    if(!userLatLng){ startTracking(); }
+    sortByDist=!sortByDist;
+    const b=document.getElementById('sortBtn'); if(b) b.classList.toggle('on', sortByDist);
+    renderAccList();
+  }
+  // copier les coordonnées dans le presse-papier
+  function copyCoords(ev, lat, lng){
+    if(ev) ev.stopPropagation();
+    const txt=lat+', '+lng;
+    const done=(el)=>{ if(el){ const o=el.textContent; el.textContent='✓'; setTimeout(()=>el.textContent=o,1200); } };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(()=>done(ev&&ev.currentTarget)).catch(()=>{});
+    } else {
+      const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(ev&&ev.currentTarget); }catch(e){} document.body.removeChild(ta);
+    }
+  }
   const GARE_ZOOM_MIN = 9;    // niveau de zoom à partir duquel les noms de gares s'affichent
   function updateGaresVisibility(){
     if(!leafletMap) return;
@@ -1809,6 +2201,7 @@
       line:   findKey(rec, ['code_ligne','codeligne','code_lign','num_ligne','numero_ligne','ligne','lib_ligne']),
       region: findKey(rec, ['region','lib_region','nom_region','region_administrative']),
       name:   findKey(rec, ['lib_acces','libelle_acces','lib_pn','libelle','lib','nom','name','intitule','designation']),
+      pk:     findKey(rec, ['pk','pk_acces','pk_debut','pkdebut','pk_deb','lib_pk','libelle_pk','pk_lieu','pk_origine','point_kilometrique','pk_reference','pkref','position','localisation_pk','pk_cumule']),
       rawKeys: Object.keys(rec)
     };
     fieldCache[dataset]=conf;
@@ -1841,6 +2234,34 @@
 
   async function fetchPointsForLine(dataset, code){
     const conf=await detectFields(dataset);
+    // 1) Méthode rapide : un seul appel via l'endpoint d'export (pas de pagination)
+    try{
+      const sel = [conf.name, conf.pk, 'pk', 'geo_point_2d', 'geo_shape'].filter((v,i,a)=>v&&a.indexOf(v)===i).join(',');
+      const url = SNCF_API+'/'+dataset+'/exports/geojson'
+                + '?where='+encodeURIComponent(conf.line+'="'+code+'"')
+                + (sel?('&select='+encodeURIComponent(sel)):'')
+                + '&limit=-1';
+      const r=await fetch(url);
+      if(r.ok){
+        const j=await r.json();
+        const feats=(j&&j.features)||[];
+        if(feats.length){
+          const out=[];
+          feats.forEach(f=>{
+            const g=f.geometry; if(!g) return;
+            let lat=null,lng=null;
+            if(g.type==='Point' && Array.isArray(g.coordinates)){ lng=g.coordinates[0]; lat=g.coordinates[1]; }
+            else if(Array.isArray(g.coordinates)){ const c=flattenFirst(g.coordinates); if(c){ lng=c[0]; lat=c[1]; } }
+            if(lat==null||lng==null) return;
+            const pr=f.properties||{};
+            const nom=(conf.name&&pr[conf.name])?pr[conf.name]:(code+' '+(pr.pk||''));
+            out.push({ n:String(nom).trim(), lat:+(+lat).toFixed(6), lng:+(+lng).toFixed(6), _pk:String((conf.pk&&pr[conf.pk])||pr.pk||'') });
+          });
+          if(out.length) return out;
+        }
+      }
+    }catch(e){ /* repli ci-dessous */ }
+    // 2) Repli : pagination classique (si l'export échoue)
     const out=[]; const pageSize=100; let offset=0; let total=Infinity;
     while(offset<total && offset<3000){
       const url=SNCF_API+'/'+dataset+'/records?where='+encodeURIComponent(conf.line+'="'+code+'"')
@@ -1850,16 +2271,23 @@
       (j.results||[]).forEach(rec=>{
         const c=getCoords(rec); if(!c) return;
         const nom = (conf.name && rec[conf.name]) ? rec[conf.name] : (code+' '+(rec.pk||rec.lieu||''));
-        out.push({ n:String(nom).trim(), lat:+c.lat.toFixed(6), lng:+c.lng.toFixed(6) });
+        out.push({ n:String(nom).trim(), lat:+c.lat.toFixed(6), lng:+c.lng.toFixed(6), _pk:String((conf.pk&&rec[conf.pk])||rec.pk||'') });
       });
       offset+=pageSize;
       if((j.results||[]).length<pageSize) break;
     }
     return out;
   }
+  // renvoie la 1re paire [lng,lat] trouvée dans une géométrie imbriquée
+  function flattenFirst(arr){
+    if(!Array.isArray(arr)) return null;
+    if(typeof arr[0]==='number') return arr;
+    for(const x of arr){ const c=flattenFirst(x); if(c) return c; }
+    return null;
+  }
 
   function showLoading(on,msg){ const el=document.getElementById('accLoading'); if(!el) return; el.style.display=on?'block':'none'; if(msg) el.textContent='⏳ '+msg; }
-  function clearMap(){ if(markerLayer){ try{markerLayer.clearLayers();}catch(e){} } clearGares(); document.getElementById('accMap').style.display='none'; }
+  function clearMap(){ if(markerLayer){ try{markerLayer.clearLayers();}catch(e){} } clearGares(); clearPkTicks(); document.getElementById('accMap').style.display='none'; }
   function renderEmpty(html){ document.getElementById('accSearchWrap').style.display='none'; document.getElementById('accList').innerHTML='<div class="acc-empty">'+html+'</div>'; }
 
   function focusPoint(idx){
@@ -1885,14 +2313,19 @@
       return;
     }
     wrap.style.display='flex';
+    var _pk=document.getElementById('pkSearch'); if(_pk) _pk.style.display = (currentLine&&currentLine.points&&currentLine.points.length) ? 'block' : 'none';
+    const sb=document.getElementById('sortBtn'); if(sb) sb.style.display = userLatLng ? 'inline-flex' : 'none';
     const q=(document.getElementById('accSearch').value||'').toLowerCase().trim();
     count.textContent=pts.filter(p=>p.n.toLowerCase().includes(q)).length+' / '+pts.length+' sites';
-    const rows=pts.map((p,i)=>({p,i})).filter(o=>o.p.n.toLowerCase().includes(q));
+    let rows=pts.map((p,i)=>({p,i})).filter(o=>o.p.n.toLowerCase().includes(q));
+    if(userLatLng){ rows.forEach(o=>{ o.d=distM(userLatLng[0],userLatLng[1],o.p.lat,o.p.lng); }); }
+    if(sortByDist && userLatLng){ rows.sort((a,b)=>a.d-b.d); }
     if(!rows.length){ list.innerHTML='<div class="acc-empty">Aucun site ne correspond à « '+q+' ».</div>'; return; }
-    list.innerHTML=rows.map(({p,i})=>{
+    list.innerHTML=rows.map(({p,i,d})=>{
       const waze='https://waze.com/ul?ll='+p.lat+','+p.lng+'&navigate=yes';
       const gmaps='https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng;
       const hasComment = p._commentaire && p._commentaire.trim();
+      const distBadge = (d!=null) ? `<span class="acc-dist">📍 ${fmtDist(d)}</span>` : '';
       const commentBlock = hasComment
         ? `<div class="acc-comment-show">
             <span class="acc-comment-icon">💬</span>
@@ -1903,7 +2336,7 @@
       return `<div class="acc-card" id="acc-card-${i}">
         <div class="acc-head" onclick="focusPoint(${i})" style="cursor:pointer;">
           <div class="acc-pin">📍</div>
-          <div class="acc-info"><div class="acc-name">${p.n}</div><div class="acc-addr">${p._pk?`<span class="acc-pk">📏 PK ${escHtml(p._pk)}</span>`:''}${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div></div>
+          <div class="acc-info"><div class="acc-name">${p.n}</div><div class="acc-addr">${distBadge}${p._pk?`<span class="acc-pk">📏 PK ${escHtml(p._pk)}</span>`:''}${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div></div>
           <span class="acc-see">Voir →</span>
         </div>
         <div class="acc-btns">
@@ -2065,15 +2498,15 @@
     if(mapEl) mapEl.classList.toggle('edit-active', !!canAdd);
   }
   function updateEditUI(){
-    const btn=document.getElementById('editBtn');
-    if(btn){ btn.textContent = editMode ? '✓ Mode édition actif — terminer' : '✏️ Modifier les points'; btn.classList.toggle('on', editMode); }
+    const btn=document.getElementById('fabEdit');
+    if(btn){ btn.textContent = editMode ? '✓' : '✏️'; btn.classList.toggle('on', editMode); btn.title = editMode ? 'Terminer l\'édition' : 'Modifier les points'; }
     const hint=document.getElementById('editHint');
     if(hint) hint.style.display = editMode ? 'block' : 'none';
     refreshEditOverlay();
     // redessine pour afficher/cacher les poignées de suppression
     if(currentCat && currentLine){
       const lignes = currentCat.national ? (currentCat._regionLignes||[]) : currentCat.lignes;
-      if(!currentCat.segments) selectLine(currentLine.id, lignes);
+      if(!currentCat.segments) selectLine(currentLine.id, lignes, true);
     }
   }
   // Ajout par clic sur la carte (en mode édition) → ouvre la modale
@@ -2188,12 +2621,14 @@
     selectCat(accesCats[0].id);
   }
 
-    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés',numartes:'Numéros Artes'};
+    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés',numartes:'Numéros Artes',adminreq:"Demandes d'accès",rappels:'Rappels'};
   function go(id){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById('ctxLabel').textContent=titles[id]||'';
     window.scrollTo({top:0,behavior:'smooth'});
+    if(id==='adminreq'){ loadAccessRequests(); }
+    if(id==='rappels'){ loadRappels(); }
     if(id==='acces'){
       if(!currentCat){
         initAcces();
@@ -2267,6 +2702,184 @@
     var map={login:'panelLogin',request:'panelRequest',pw:'panelPw'};
     document.getElementById(map[mode]||'panelLogin').classList.add('on');
   }
+  // ===== Rappels en gare (collaboratif) =====
+  let rappelsData=[], rapShowWithOnly=true, _rapOpen={}, _garesUnique=null, _rapSub=false;
+  function allGaresUnique(){
+    if(_garesUnique) return _garesUnique;
+    const map={};
+    Object.keys(garesData).forEach(lid=>{ (garesData[lid]||[]).forEach(g=>{
+      if(!map[g.n]) map[g.n]={n:g.n,tri:g.tri,lat:g.lat,lng:g.lng,lignes:[lid]};
+      else if(map[g.n].lignes.indexOf(lid)<0) map[g.n].lignes.push(lid);
+    }); });
+    _garesUnique=Object.keys(map).map(k=>map[k]).sort((a,b)=>a.n.localeCompare(b.n,'fr'));
+    return _garesUnique;
+  }
+  function userPrenom(){
+    const lp=(currentUserEmail||'').split('@')[0]||'';
+    const first=lp.split(/[._-]/)[0]||'';
+    return first ? first.charAt(0).toUpperCase()+first.slice(1).toLowerCase() : '';
+  }
+  function fmtDateFr(d){ try{ const dt=new Date(d); if(isNaN(dt.getTime())) return String(d); return dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return String(d); } }
+  function isPastDate(d){ try{ const dt=new Date(d); const t=new Date(); t.setHours(0,0,0,0); return dt<t; }catch(e){ return false; } }
+  async function loadRappels(){
+    const el=document.getElementById('rappelList');
+    if(!supaOk){ renderRappels(); return; }
+    try{
+      const { data, error } = await supa.from('rappels').select('*').order('created_at',{ascending:false});
+      if(error) throw error;
+      rappelsData = data||[];
+    }catch(e){ if(el) el.innerHTML='<div class="acc-empty">Lecture impossible pour le moment.</div>'; return; }
+    if(!_rapSub){ _rapSub=true; try{ supa.channel('rappels-rt').on('postgres_changes',{event:'*',schema:'public',table:'rappels'},()=>{ loadRappels(); }).subscribe(); }catch(e){} }
+    renderRappels();
+    refreshRappelHomeBadge();
+  }
+  function rapItemHtml(r){
+    const done = r.status==='fait';
+    let meta='';
+    if(r.prenom) meta+='<span class="rap-chip who">👤 '+escHtml(r.prenom)+'</span>';
+    let bottom='';
+    if(done){
+      const who=r.done_by?(' par '+r.done_by):''; const dat=r.done_at?(' le '+fmtDateFr(r.done_at)):'';
+      bottom='<div class="rap-done-info">✓ Fait'+escHtml(who+dat)+'</div>';
+      if(r.done_comment) bottom+='<div class="rap-done-comment">« '+escHtml(r.done_comment)+' »</div>';
+    } else {
+      bottom='<button class="rap-done-btn" onclick="markRappelDone(\''+r.id+'\')">✓ Marquer comme fait</button>';
+    }
+    // barre de progression du temps restant (uniquement pour les rappels actifs avec date)
+    let progress='';
+    if(!done){
+      const pr=rapProgress(r);
+      if(pr){
+        progress='<div class="rap-prog-row"><span class="rap-prog-label rap-'+pr.color+'">⏱ '+escHtml(pr.label)+'</span>'
+               + '<span class="rap-prog-due">Date limite : '+escHtml(pr.due)+'</span></div>'
+               + '<div class="rap-prog"><div class="rap-prog-fill rap-fill-'+pr.color+'" style="width:'+pr.pct+'%"></div></div>';
+      } else {
+        progress='<div class="rap-prog-row"><span class="rap-prog-due">Aucune date limite</span></div>';
+      }
+    }
+    return '<div class="rap-item'+(done?' done':'')+'">'
+      + '<div class="rap-item-top"><div class="rap-item-title">'+escHtml(r.titre||'(Sans titre)')+'</div></div>'
+      + (r.texte?'<div class="rap-item-text">'+escHtml(r.texte)+'</div>':'')
+      + (meta?'<div class="rap-item-meta">'+meta+'</div>':'')
+      + progress + bottom + '</div>';
+  }
+  function renderRappels(){
+    const el=document.getElementById('rappelList'); if(!el) return;
+    const q=(document.getElementById('rapSearch').value||'').toLowerCase().trim();
+    const byGare={}; rappelsData.forEach(r=>{ (byGare[r.gare]=byGare[r.gare]||[]).push(r); });
+    let gares=allGaresUnique().slice();
+    Object.keys(byGare).forEach(g=>{ if(!gares.find(x=>x.n===g)) gares.push({n:g,tri:'',lignes:[]}); });
+    if(q) gares=gares.filter(g=>g.n.toLowerCase().includes(q));
+    const totalCount=g=>(byGare[g.n]||[]).length;
+    const activeCount=g=>(byGare[g.n]||[]).filter(r=>r.status!=='fait').length;
+    if(rapShowWithOnly && !q) gares=gares.filter(g=>totalCount(g)>0);
+    if(!gares.length){ el.innerHTML='<div class="acc-empty">'+(rapShowWithOnly&&!q?'Aucune gare avec rappel pour le moment. Touchez « Créer un rappel » pour en ajouter un.':'Aucune gare ne correspond à votre recherche.')+'</div>'; return; }
+    el.innerHTML=gares.map(g=>{
+      const items=(byGare[g.n]||[]).slice().sort((a,b)=>{ const af=a.status==='fait',bf=b.status==='fait'; return af===bf?0:(af?1:-1); });
+      const ac=activeCount(g), tc=totalCount(g);
+      const open=_rapOpen[g.n];
+      const badge = ac>0 ? '<span class="rap-count-badge">'+ac+'</span>'
+                  : (tc>0 ? '<span class="rap-count-badge" style="background:#0b8043;box-shadow:none">✓</span>' : '');
+      const body = items.length ? items.map(rapItemHtml).join('') : '<div class="rap-empty-body">Aucun rappel sur cette gare.</div>';
+      return '<div class="rap-gare'+(open?' open':'')+'" data-gare="'+escHtml(g.n)+'">'
+        + '<div class="rap-gare-head" onclick="toggleRapGareEl(this)">'
+        +   '<div class="rap-gare-ic">🚉</div>'
+        +   '<div class="rap-gare-info"><div class="rap-gare-name">'+escHtml(g.n)+'</div></div>'
+        +   badge
+        +   '<svg class="rap-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>'
+        + '</div>'
+        + '<div class="rap-gare-body">'+body+'</div>'
+      + '</div>';
+    }).join('');
+  }
+  function toggleRapGareEl(headEl){
+    const card=headEl.closest('.rap-gare'); if(!card) return;
+    const g=card.getAttribute('data-gare');
+    const open=card.classList.toggle('open');
+    _rapOpen[g]=open;
+  }
+  function setRapFilter(mode){
+    rapShowWithOnly = (mode!=='all');
+    const seg=document.getElementById('rapSeg');
+    if(seg){
+      seg.classList.toggle('on-all', !rapShowWithOnly);
+      const btns=seg.querySelectorAll('.rap-seg-btn');
+      if(btns[0]) btns[0].classList.toggle('active', rapShowWithOnly);
+      if(btns[1]) btns[1].classList.toggle('active', !rapShowWithOnly);
+    }
+    renderRappels();
+  }
+  // calcule l'avancement du temps restant jusqu'à la date limite (en jours calendaires)
+  function rapProgress(r){
+    if(!r.date_limite) return null;
+    const p=String(r.date_limite).split('-'); if(p.length<3) return null;
+    const due=new Date(+p[0],+p[1]-1,+p[2]); if(isNaN(due.getTime())) return null;
+    const today=new Date(); today.setHours(0,0,0,0);
+    let created=null;
+    if(r.created_at){ const c=new Date(r.created_at); if(!isNaN(c.getTime())) created=new Date(c.getFullYear(),c.getMonth(),c.getDate()); }
+    if(!created || created>=due) created=new Date(due.getTime()-14*864e5);
+    const daysLeft=Math.round((due-today)/864e5);
+    const totalDays=Math.max(1,Math.round((due-created)/864e5));
+    let ratio=daysLeft/totalDays; if(ratio>1) ratio=1; if(ratio<0) ratio=0;
+    let color,label;
+    if(daysLeft<0){ color='red'; label='En retard de '+Math.abs(daysLeft)+' j'; ratio=0; }
+    else if(daysLeft===0){ color='red'; label="Dernier jour"; }
+    else { color = ratio>0.5?'green':(ratio>0.2?'orange':'red'); label='Reste '+daysLeft+' j'; }
+    const dueLabel=due.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+    return { pct:Math.round(ratio*100), color:color, label:label, due:dueLabel };
+  }
+  function openRappelModal(){
+    const sel=document.getElementById('rapGare');
+    sel.innerHTML='<option value="">— Choisir une gare —</option>'+allGaresUnique().map(g=>'<option value="'+escHtml(g.n)+'">'+escHtml(g.n)+'</option>').join('');
+    document.getElementById('rapTitre').value='';
+    document.getElementById('rapTexte').value='';
+    document.getElementById('rapDate').value='';
+    _msgRap('');
+    document.getElementById('rapModal').style.display='flex';
+  }
+  function closeRappelModal(){ const m=document.getElementById('rapModal'); if(m) m.style.display='none'; }
+  function _msgRap(t,k){ const m=document.getElementById('rapMsg'); if(m){ m.textContent=t||''; m.className='rap-msg'+(k?(' '+k):''); } }
+  async function confirmRappel(){
+    const gare=document.getElementById('rapGare').value;
+    const prenom=userPrenom();
+    const titre=(document.getElementById('rapTitre').value||'').trim();
+    const texte=(document.getElementById('rapTexte').value||'').trim();
+    const date=document.getElementById('rapDate').value||null;
+    if(!gare){ _msgRap('Choisissez une gare.','err'); return; }
+    if(!titre){ _msgRap('Donnez un titre au rappel.','err'); return; }
+    if(!supaOk){ _msgRap('Indisponible en mode aperçu.','err'); return; }
+    _busy('rapOkBtn',true);
+    try{
+      const row={ gare:gare, prenom:prenom||null, titre:titre, texte:texte||null, date_limite:date, status:'actif', auteur_email:currentUserEmail||null };
+      const { error } = await supa.from('rappels').insert(row);
+      if(error) throw error;
+      _rapOpen[gare]=true;
+      closeRappelModal();
+      await loadRappels();
+    }catch(e){ _msgRap('Échec : '+(e.message||''),'err'); }
+    _busy('rapOkBtn',false);
+  }
+  async function markRappelDone(id){
+    const c=prompt('Ajouter un commentaire ? (facultatif)','');
+    if(c===null) return;
+    if(!supaOk) return;
+    try{
+      const upd={ status:'fait', done_at:new Date().toISOString(), done_by:userPrenom()||currentUserEmail||'', done_comment:(c||'').trim()||null };
+      const { error } = await supa.from('rappels').update(upd).eq('id',id);
+      if(error) throw error;
+      await loadRappels();
+    }catch(e){ alert('Impossible de valider : '+(e.message||'')); }
+  }
+  async function refreshRappelHomeBadge(){
+    let n=0;
+    try{
+      if(supaOk){ const { data } = await supa.from('rappels').select('id').neq('status','fait'); n=data?data.length:0; }
+      else { n=(rappelsData||[]).filter(r=>r.status!=='fait').length; }
+    }catch(e){ n=(rappelsData||[]).filter(r=>r.status!=='fait').length; }
+    const b=document.getElementById('rappelHomeBadge'); const dot=document.getElementById('rappelHomeDot');
+    if(b){ if(n>0){ b.style.display='inline-flex'; b.textContent=n; } else b.style.display='none'; }
+    if(dot){ dot.style.display = n>0 ? 'block' : 'none'; }
+  }
   function hideGate(){
     var g=document.getElementById('authGate'); if(g) g.style.display='none';
     document.body.classList.add('authed');
@@ -2283,16 +2896,74 @@
     }catch(e){ showGate('login'); }
     supa.auth.onAuthStateChange(function(event){ if(event==='SIGNED_OUT'){ showGate('login'); } });
   }
+  let isAdmin=false, currentUserEmail='';
   async function afterLogin(){
-    let must=false;
+    let must=false; isAdmin=false;
     try{
       const { data:{ user } } = await supa.auth.getUser();
       if(user){
-        const { data } = await supa.from('profiles').select('must_change_password').eq('id',user.id).maybeSingle();
+        currentUserEmail = user.email || '';
+        const { data } = await supa.from('profiles').select('must_change_password,is_admin').eq('id',user.id).maybeSingle();
         must = !!(data && data.must_change_password);
+        isAdmin = !!(data && data.is_admin);
       }
     }catch(e){}
-    if(must){ showGate('pw'); } else { hideGate(); }
+    // affiche l'entrée Admin uniquement pour les administrateurs
+    var ar=document.getElementById('adminRow'); if(ar) ar.style.display = isAdmin ? 'flex' : 'none';
+    if(must){ showGate('pw'); } else { hideGate(); if(isAdmin) refreshAdminBadge(); refreshRappelHomeBadge(); }
+  }
+  // ===== Administration des demandes d'accès =====
+  let reqShowPending=true;
+  async function refreshAdminBadge(){
+    if(!isAdmin || !supaOk) return;
+    try{
+      const { data } = await supa.from('access_requests').select('id',{count:'exact'}).eq('status','pending');
+      const n=(data?data.length:0);
+      const b=document.getElementById('adminCount'); if(b) b.textContent=n;
+    }catch(e){}
+  }
+  function toggleReqFilter(){
+    reqShowPending=!reqShowPending;
+    var b=document.getElementById('reqFilterBtn'); if(b) b.textContent = reqShowPending ? 'En attente' : 'Toutes';
+    loadAccessRequests();
+  }
+  async function loadAccessRequests(){
+    const el=document.getElementById('adminReqList'); if(!el) return;
+    if(!supaOk){ el.innerHTML='<div class="acc-empty">Service indisponible.</div>'; return; }
+    el.innerHTML='<div class="acc-empty">Chargement…</div>';
+    try{
+      let qb=supa.from('access_requests').select('*').order('created_at',{ascending:false});
+      if(reqShowPending) qb=qb.eq('status','pending');
+      const { data, error } = await qb;
+      if(error) throw error;
+      if(!data || !data.length){ el.innerHTML='<div class="acc-empty">Aucune demande'+(reqShowPending?' en attente':'')+'.</div>'; refreshAdminBadge(); return; }
+      el.innerHTML = data.map(function(r){
+        const d = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+        const done = r.status && r.status!=='pending';
+        return '<div class="is-card" style="border-left-color:'+(done?'#0b8043':'#9024FA')+'">'
+          + '<div class="is-title">'+escHtml((r.prenom||'')+' '+(r.nom||''))+(done?' <span class="cl-new" style="background:#0b8043">Validée</span>':'')+'</div>'
+          + '<div class="is-row"><span class="is-lbl">Email</span><div class="is-vals"><a class="is-mail" href="mailto:'+escHtml(r.email||'')+'">'+escHtml(r.email||'')+'</a><button class="acc-copy" title="Copier" onclick="copyText(event,\''+escHtml(r.email||'')+'\')">⧉</button></div></div>'
+          + '<div class="is-row"><span class="is-lbl">CP / Matricule</span><div class="is-vals"><span class="is-code">'+escHtml(r.cp||'—')+'</span></div></div>'
+          + '<div class="is-row"><span class="is-lbl">Demandé le</span><div class="is-vals"><span class="esc-cas">'+d+'</span></div></div>'
+          + (done?'':'<button class="pt-add" style="margin-top:10px;width:100%" onclick="markRequestDone(\''+r.id+'\')">✓ Marquer comme validée</button>')
+          + '</div>';
+      }).join('');
+      refreshAdminBadge();
+    }catch(e){ el.innerHTML='<div class="acc-empty">Lecture impossible (réservé aux administrateurs).</div>'; }
+  }
+  async function markRequestDone(id){
+    if(!confirm('Marquer cette demande comme validée ? (créez d\'abord le compte dans Supabase)')) return;
+    try{
+      const { error } = await supa.from('access_requests').update({ status:'validee' }).eq('id',id);
+      if(error) throw error;
+      loadAccessRequests();
+    }catch(e){ alert('Mise à jour impossible : '+(e.message||'')); }
+  }
+  function copyText(ev, txt){
+    if(ev) ev.stopPropagation();
+    const done=()=>{ const el=ev&&ev.currentTarget; if(el){ const o=el.textContent; el.textContent='✓'; setTimeout(()=>el.textContent=o,1200); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(()=>{}); }
+    else { const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(ta); }
   }
   async function doLogin(){
     const email=_v('authEmail').trim().toLowerCase(), pw=_v('authPw');
