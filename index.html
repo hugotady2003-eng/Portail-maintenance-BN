@@ -790,6 +790,13 @@
   .rap-msg{font-size:12px;margin-top:9px;min-height:14px;}
   .rap-msg.err{color:#b42318;font-weight:600;}
   .rap-msg.ok{color:#0b8043;font-weight:600;}
+  /* saisie de gare avec liste filtrée */
+  .rap-auto{position:relative;}
+  .rap-auto-list{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:6;max-height:200px;overflow-y:auto;
+    background:#fff;border:1px solid var(--gris-bord);border-radius:12px;box-shadow:0 14px 34px rgba(15,23,42,.2);-webkit-overflow-scrolling:touch;}
+  .rap-auto-item{padding:11px 14px;font-size:13.5px;font-weight:600;color:var(--anthracite);cursor:pointer;border-bottom:1px solid #f0f1f4;}
+  .rap-auto-item:last-child{border-bottom:none;}
+  .rap-auto-item:active,.rap-auto-item:hover{background:#f4f0fe;color:var(--violet-vin);}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -1181,7 +1188,13 @@
     <div class="pt-modal-card">
       <div class="pt-modal-title">Nouveau rappel</div>
       <label class="rap-lbl">Gare concernée</label>
-      <select id="rapGare" class="rap-input"></select>
+      <div class="rap-auto">
+        <input id="rapGareInput" class="rap-input" type="text" autocomplete="off" placeholder="Tapez le nom de la gare…"
+               oninput="rapGareSuggest()" onfocus="rapGareSuggest()"
+               onblur="setTimeout(function(){var l=document.getElementById('rapGareList');if(l)l.style.display='none';},160)">
+        <input type="hidden" id="rapGare">
+        <div class="rap-auto-list" id="rapGareList" style="display:none;"></div>
+      </div>
       <label class="rap-lbl">Titre du rappel</label>
       <input id="rapTitre" class="rap-input" type="text" placeholder="Ex. Vérifier l'armoire BT" maxlength="80">
       <label class="rap-lbl">Description</label>
@@ -1191,7 +1204,7 @@
       <div id="rapMsg" class="rap-msg"></div>
       <div class="pt-modal-btns">
         <button class="pt-cancel" onclick="closeRappelModal()">Annuler</button>
-        <button class="pt-ok" id="rapOkBtn" onclick="confirmRappel()">Créer</button>
+        <button class="pt-add" id="rapOkBtn" onclick="confirmRappel()">Créer le rappel</button>
       </div>
     </div>
   </div>
@@ -2829,23 +2842,45 @@
     return { pct:Math.round(ratio*100), color:color, label:label, due:dueLabel };
   }
   function openRappelModal(){
-    const sel=document.getElementById('rapGare');
-    sel.innerHTML='<option value="">— Choisir une gare —</option>'+allGaresUnique().map(g=>'<option value="'+escHtml(g.n)+'">'+escHtml(g.n)+'</option>').join('');
+    document.getElementById('rapGareInput').value='';
+    document.getElementById('rapGare').value='';
+    const list=document.getElementById('rapGareList'); if(list){ list.style.display='none'; list.innerHTML=''; }
     document.getElementById('rapTitre').value='';
     document.getElementById('rapTexte').value='';
     document.getElementById('rapDate').value='';
     _msgRap('');
     document.getElementById('rapModal').style.display='flex';
   }
+  function rapGareSuggest(){
+    const inp=document.getElementById('rapGareInput');
+    const list=document.getElementById('rapGareList');
+    const hid=document.getElementById('rapGare');
+    const q=(inp.value||'').toLowerCase().trim();
+    const gares=allGaresUnique();
+    const exact=gares.find(g=>g.n.toLowerCase()===q);
+    hid.value = exact ? exact.n : '';
+    let matches = q ? gares.filter(g=>g.n.toLowerCase().includes(q)) : gares.slice(0,40);
+    if(!matches.length){ list.style.display='none'; return; }
+    list.innerHTML=matches.slice(0,40).map(g=>'<div class="rap-auto-item" data-name="'+escHtml(g.n)+'" onmousedown="rapPickGareEl(this)" ontouchstart="rapPickGareEl(this)">🚉 '+escHtml(g.n)+'</div>').join('');
+    list.style.display='block';
+  }
+  function rapPickGareEl(el){
+    const n=el.getAttribute('data-name');
+    document.getElementById('rapGareInput').value=n;
+    document.getElementById('rapGare').value=n;
+    const list=document.getElementById('rapGareList'); if(list) list.style.display='none';
+  }
   function closeRappelModal(){ const m=document.getElementById('rapModal'); if(m) m.style.display='none'; }
   function _msgRap(t,k){ const m=document.getElementById('rapMsg'); if(m){ m.textContent=t||''; m.className='rap-msg'+(k?(' '+k):''); } }
   async function confirmRappel(){
-    const gare=document.getElementById('rapGare').value;
+    let gare=document.getElementById('rapGare').value;
+    if(!gare){ const typed=(document.getElementById('rapGareInput').value||'').trim();
+      const ex=allGaresUnique().find(g=>g.n.toLowerCase()===typed.toLowerCase()); if(ex) gare=ex.n; }
     const prenom=userPrenom();
     const titre=(document.getElementById('rapTitre').value||'').trim();
     const texte=(document.getElementById('rapTexte').value||'').trim();
     const date=document.getElementById('rapDate').value||null;
-    if(!gare){ _msgRap('Choisissez une gare.','err'); return; }
+    if(!gare){ _msgRap('Choisissez une gare dans la liste.','err'); return; }
     if(!titre){ _msgRap('Donnez un titre au rappel.','err'); return; }
     if(!supaOk){ _msgRap('Indisponible en mode aperçu.','err'); return; }
     _busy('rapOkBtn',true);
@@ -2854,10 +2889,12 @@
       const { error } = await supa.from('rappels').insert(row);
       if(error) throw error;
       _rapOpen[gare]=true;
-      closeRappelModal();
+      setRapFilter('with');
+      _msgRap('✓ Rappel créé','ok');
       await loadRappels();
-    }catch(e){ _msgRap('Échec : '+(e.message||''),'err'); }
-    _busy('rapOkBtn',false);
+      _busy('rapOkBtn',false);
+      setTimeout(closeRappelModal, 500);
+    }catch(e){ _msgRap('Échec : '+(e.message||''),'err'); _busy('rapOkBtn',false); }
   }
   async function markRappelDone(id){
     const c=prompt('Ajouter un commentaire ? (facultatif)','');
