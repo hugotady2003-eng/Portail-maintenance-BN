@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Sécurité : anti-clickjacking (frame-ancestors) + politique de Referer -->
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Portail Maintenance Basse-Normandie — SNCF Réseau</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -889,7 +892,7 @@
       <div class="auth-sub">Pour votre première connexion, choisissez un mot de passe personnel</div>
       <div class="auth-msg" id="pwMsg"></div>
       <label>Nouveau mot de passe
-        <input id="newPw" type="password" autocomplete="new-password" placeholder="8 caractères minimum">
+        <input id="newPw" type="password" autocomplete="new-password" placeholder="12 car. : maj, min, chiffre, spécial">
       </label>
       <label>Confirmer le mot de passe
         <input id="newPw2" type="password" autocomplete="new-password" placeholder="Retapez le mot de passe" onkeydown="if(event.key==='Enter')doChangePw()">
@@ -950,7 +953,7 @@
       <div class="group-title"><span class="dot"></span>Espaces &amp; ressources</div>
       <div class="list">
         <div class="row b-violet" id="adminRow" style="display:none" onclick="go('adminreq')"><div class="ic">🛂</div><div class="tx"><div class="lbl">Demandes d'accès</div><div class="sub">Validation des nouveaux utilisateurs</div></div><span class="ext" id="adminCount">0</span></div>
-        <div class="row b-blue"   onclick="go('maintenance')"><div class="ic">📁</div><div class="tx"><div class="lbl">Maintenance / Docs</div><div class="sub">BN · Docs · Fiches Guides · Réseau BN TEL EXT</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="row b-blue"   onclick="go('maintenance')"><div class="ic">📁</div><div class="tx"><div class="lbl">Maintenance / Docs</div><div class="sub">Fiches de maintenance · Guides · Fiche applicative</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="row b-anthra" onclick="go('acces')"><div class="ic">📍</div><div class="tx"><div class="lbl">Accès</div><div class="sub">Carte des accès · Itinéraire Maps &amp; Waze</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="row b-violet" onclick="go('rappels')"><div class="ic">📝</div><span class="rap-dot" id="rappelHomeDot" style="display:none"></span><div class="tx"><div class="lbl">Rappels</div><div class="sub">Choses à faire en gare · partagé</div></div><span class="ext rap-home-badge" id="rappelHomeBadge" style="display:none">0</span></div>
         <div class="row b-red"    onclick="go('powerswitch')"><div class="ic">⚡</div><div class="tx"><div class="lbl">Power-Switch</div><div class="sub">Carte · Login &amp; mot de passe</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
@@ -981,6 +984,8 @@
       <div class="list">
         <a class="row b-blue" href="https://monit-iv.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">📊</div><div class="tx"><div class="lbl">Monit-IV</div><div class="sub">Supervision</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-blue" href="https://uk.fusion.live/resources/jsps/pol/login/Logon.jsp" target="_blank" rel="noopener noreferrer"><div class="ic">🗂️</div><div class="tx"><div class="lbl">FusionLive</div><div class="sub">Gestion documentaire</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-blue" href="https://mgsmr.sncf.fr/" target="_blank" rel="noopener noreferrer"><div class="ic">📡</div><div class="tx"><div class="lbl">MGSMR</div><div class="sub">Maintenance GSM-R</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-blue" href="https://vertigo.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">🧭</div><div class="tx"><div class="lbl">Vertigo</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
         <div class="row row-soon b-blue"><div class="ic">🗄️</div><div class="tx"><div class="lbl">Digidoc+</div><div class="sub">Gestion documentaire</div></div><span class="soon-badge">à venir</span></div>
         <div class="row row-soon b-blue"><div class="ic">🚗</div><div class="tx"><div class="lbl">Véhicule</div><div class="sub">Gestion du parc</div></div><span class="soon-badge">à venir</span></div>
         <div class="row row-soon b-red"><div class="ic">🛡️</div><div class="tx"><div class="lbl">Odin</div><div class="sub">Application métier</div></div><span class="soon-badge">à venir</span></div>
@@ -1000,17 +1005,13 @@
     <div class="tabwrap">
       <div class="tabs">
         <button class="tab active" data-c="bn"     onclick="tab(this,'p-bn')">Fiches de maintenance</button>
-        <button class="tab"        data-c="docs"   onclick="tab(this,'p-docs')">Docs</button>
         <button class="tab"        data-c="fiches" onclick="tab(this,'p-fiches')">Fiches Guides</button>
         <button class="tab"        data-c="appli"  onclick="tab(this,'p-appli')">Fiche applicative</button>
-        <button class="tab"        data-c="reseau" onclick="tab(this,'p-reseau')">Réseau BN TEL EXT</button>
       </div>
     </div>
     <div id="p-bn"     class="panel active"><div class="links" id="L-bn"></div></div>
-    <div id="p-docs"   class="panel"><div class="links" id="L-docs"></div></div>
     <div id="p-fiches" class="panel"><div class="links" id="L-fiches"></div></div>
     <div id="p-appli"  class="panel"><div class="links" id="L-appli"></div></div>
-    <div id="p-reseau" class="panel"><div class="links" id="L-reseau"></div></div>
   </div>
 
   <!-- ============ ACCES ============ -->
@@ -1329,7 +1330,6 @@
   // Remplacez ces 3 valeurs (voir SUPABASE_SETUP.md)
   const SUPA_URL  = "https://dueexbflbnontaabdart.supabase.co";
   const SUPA_KEY  = "sb_publishable_8E-PuyCvG18El7FR8Ug4qw_p89gt7_6";
-  const EDIT_CODE = "SNCF";   // code d'accès pour modifier
   // ====================================================
 
   let supa = null, supaOk = false;
@@ -1369,7 +1369,7 @@
       {t:'Schémas AF', u:'https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_T_Transmission/2%20AF/MAINTENANCES_BN/maintenance%20AF%202021/Maints%20AF80.xlsx?d=w72f37530ebaa47de85a32fb10da5a45a&csf=1&web=1&e=yVJD3m'}
     ]}
   ];
-  const accents={ 'L-bn':'var(--vert)','L-docs':'var(--bleu)','L-fiches':'var(--orange)','L-appli':'var(--violet-elec)','L-reseau':'var(--anthracite)' };
+  const accents={ 'L-bn':'var(--vert)','L-fiches':'var(--orange)','L-appli':'var(--violet-elec)' };
   // associe chaque onglet à la propriété du domaine contenant son lien
   const tabKey={ 'L-bn':'fiches', 'L-fiches':'guide', 'L-appli':'appli' };
   function build(id){
@@ -1405,7 +1405,7 @@
   document.addEventListener('click', ()=>{
     document.querySelectorAll('.pop-wrap.open').forEach(w=>w.classList.remove('open'));
   });
-  ['L-bn','L-docs','L-fiches','L-appli','L-reseau'].forEach(build);
+  ['L-bn','L-fiches','L-appli'].forEach(build);
 
   // ===== ACCÈS : sites par domaine, affichés sur carte OpenStreetMap (Leaflet) =====
   // Pour ajouter un domaine, fournissez le KMZ/KML : les points (n, lat, lng) seront importés ici.
@@ -1699,7 +1699,7 @@
       renderAccList();
     }catch(e){
       if(btn){ btn.textContent='💾 Enregistrer'; btn.disabled=false; }
-      supaDown('Commentaire non enregistré : '+(e.message||e));
+      console.error(e); supaDown('Commentaire non enregistré. Réessayez.');
     }
   }
   function removeUserPoint(sid){
@@ -1836,7 +1836,7 @@
       if(lignes.length){ selectLine(lignes[0].id, lignes); }
       else { currentLine=null; clearMap(); renderEmpty('Aucune ligne trouvée pour '+region+'.'); }
     }catch(e){
-      renderEmpty('Impossible de charger les données SNCF.<br><span style="font-size:11px">Vérifiez la connexion internet. ('+ (e.message||e) +')</span>');
+      console.error(e); renderEmpty('Impossible de charger les données.<br><span style="font-size:11px">Vérifiez votre connexion internet.</span>');
       clearMap();
     }finally{ showLoading(false); }
   }
@@ -2358,7 +2358,7 @@
     let rows=pts.map((p,i)=>({p,i})).filter(o=>o.p.n.toLowerCase().includes(q));
     if(userLatLng){ rows.forEach(o=>{ o.d=distM(userLatLng[0],userLatLng[1],o.p.lat,o.p.lng); }); }
     if(sortByDist && userLatLng){ rows.sort((a,b)=>a.d-b.d); }
-    if(!rows.length){ list.innerHTML='<div class="acc-empty">Aucun site ne correspond à « '+q+' ».</div>'; return; }
+    if(!rows.length){ list.innerHTML='<div class="acc-empty">Aucun site ne correspond à « '+escHtml(q)+' ».</div>'; return; }
     list.innerHTML=rows.map(({p,i,d})=>{
       const waze='https://waze.com/ul?ll='+p.lat+','+p.lng+'&navigate=yes';
       const gmaps='https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng;
@@ -2523,10 +2523,9 @@
   // ---- UI d'édition ----
   function toggleEdit(){
     if(editMode){ editMode=false; updateEditUI(); return; }
-    const code = prompt("Code d'accès pour modifier les points :");
-    if(code===null) return;
-    if(code===EDIT_CODE){ editMode=true; updateEditUI(); }
-    else alert("Code incorrect.");
+    // L'accès est déjà protégé par l'authentification (compte requis + règles base de données).
+    if(!confirm('Activer le mode édition ? Les ajouts/suppressions de points sont partagés avec tous.')) return;
+    editMode=true; updateEditUI();
   }
   function refreshEditOverlay(){
     const canAdd = editMode && currentCat && !currentCat.segments;
@@ -2574,13 +2573,13 @@
   }
   function confirmAddPoint(){
     if(!pendingLatLng) return;
-    const nom=document.getElementById('ptName').value.trim();
+    const nom=document.getElementById('ptName').value.trim().slice(0,80);
     if(!nom) return;
-    const pk=document.getElementById('ptPk').value.trim();
+    const pk=document.getElementById('ptPk').value.trim().slice(0,20);
     const ll=pendingLatLng;
     const btn=document.getElementById('ptAddBtn');
     btn.disabled=true; btn.textContent='⏳ Ajout…';
-    const auteur = localStorage.getItem('bn_auteur') || promptAuteur();
+    const auteur = (localStorage.getItem('bn_auteur') || promptAuteur() || '').slice(0,40);
     addPoint(currentCat.id, currentLine.id, nom, +ll.lat.toFixed(6), +ll.lng.toFixed(6), auteur, pk)
       .then(ok=>{
         btn.textContent='Ajouter le point';
@@ -2592,7 +2591,7 @@
       });
   }
   function promptAuteur(){
-    const a = prompt("Votre nom (pour le journal des modifications) :")||'';
+    const a = (prompt("Votre nom (pour le journal des modifications) :")||'').trim().slice(0,40);
     if(a) try{ localStorage.setItem('bn_auteur', a); }catch(e){}
     return a;
   }
@@ -2611,7 +2610,7 @@
     const pts=(currentLine && currentLine.points)||[];
     const p=pts[idx]; if(!p) return;
     const ta=document.getElementById('acc-cmt-ta-'+idx);
-    const texte=(ta?ta.value:'').trim();
+    const texte=(ta?ta.value:'').trim().slice(0,500);
     if(!supaOk){ alert('Base de données non disponible.'); return; }
     try{
       // Upsert dans la table commentaires : (categorie, ligne, lat, lng) → texte
@@ -2629,7 +2628,7 @@
       if(markerLayer){ markerLayer.eachLayer(l=>{ if(l._pt===p) l.setPopupContent(popupHtml(p)); }); }
       // Rafraîchit la carte liste
       renderAccList();
-    }catch(e){ supaDown('Commentaire non enregistré : '+(e.message||e)); }
+    }catch(e){ console.error(e); supaDown('Commentaire non enregistré. Réessayez.'); }
   }
 
   // Temps réel commentaires
@@ -2902,8 +2901,8 @@
     if(!gare){ const typed=(document.getElementById('rapGareInput').value||'').trim();
       const ex=allGaresUnique().find(g=>g.n.toLowerCase()===typed.toLowerCase()); if(ex) gare=ex.n; }
     const prenom=userPrenom();
-    const titre=(document.getElementById('rapTitre').value||'').trim();
-    const texte=(document.getElementById('rapTexte').value||'').trim();
+    const titre=(document.getElementById('rapTitre').value||'').trim().slice(0,80);
+    const texte=(document.getElementById('rapTexte').value||'').trim().slice(0,500);
     const date=document.getElementById('rapDate').value||null;
     if(!gare){ _msgRap('Choisissez une gare dans la liste.','err'); return; }
     if(!titre){ _msgRap('Donnez un titre au rappel.','err'); return; }
@@ -2919,7 +2918,7 @@
       await loadRappels();
       _busy('rapOkBtn',false);
       setTimeout(closeRappelModal, 500);
-    }catch(e){ _msgRap('Échec : '+(e.message||''),'err'); _busy('rapOkBtn',false); }
+    }catch(e){ console.error(e); _msgRap('Échec de la création. Réessayez.','err'); _busy('rapOkBtn',false); }
   }
   async function markRappelDone(id){
     const c=prompt('Ajouter un commentaire ? (facultatif)','');
@@ -2930,7 +2929,7 @@
       const { error } = await supa.from('rappels').update(upd).eq('id',id);
       if(error) throw error;
       await loadRappels();
-    }catch(e){ alert('Impossible de valider : '+(e.message||'')); }
+    }catch(e){ console.error(e); alert('Impossible de valider pour le moment. Réessayez.'); }
   }
   async function refreshRappelHomeBadge(){
     let n=0;
@@ -2956,7 +2955,14 @@
       const { data:{ session } } = await supa.auth.getSession();
       if(session){ await afterLogin(); } else { showGate('login'); }
     }catch(e){ showGate('login'); }
-    supa.auth.onAuthStateChange(function(event){ if(event==='SIGNED_OUT'){ showGate('login'); } });
+    supa.auth.onAuthStateChange(function(event){
+      if(event==='SIGNED_OUT'){
+        try{ stopSessionTimers(); }catch(e){}
+        try{ isAdmin=false; var ar=document.getElementById('adminRow'); if(ar) ar.style.display='none';
+             var al=document.getElementById('adminReqList'); if(al) al.innerHTML=''; }catch(e){}
+        showGate('login');
+      }
+    });
   }
   let isAdmin=false, currentUserEmail='';
   async function afterLogin(){
@@ -2972,7 +2978,7 @@
     }catch(e){}
     // affiche l'entrée Admin uniquement pour les administrateurs
     var ar=document.getElementById('adminRow'); if(ar) ar.style.display = isAdmin ? 'flex' : 'none';
-    if(must){ showGate('pw'); } else { hideGate(); if(isAdmin) refreshAdminBadge(); refreshRappelHomeBadge(); }
+    if(must){ showGate('pw'); } else { hideGate(); startSessionTimers(); if(isAdmin) refreshAdminBadge(); refreshRappelHomeBadge(); }
   }
   // ===== Administration des demandes d'accès =====
   let reqShowPending=true;
@@ -3004,7 +3010,7 @@
         const done = r.status && r.status!=='pending';
         return '<div class="is-card" style="border-left-color:'+(done?'#0b8043':'#9024FA')+'">'
           + '<div class="is-title">'+escHtml((r.prenom||'')+' '+(r.nom||''))+(done?' <span class="cl-new" style="background:#0b8043">Validée</span>':'')+'</div>'
-          + '<div class="is-row"><span class="is-lbl">Email</span><div class="is-vals"><a class="is-mail" href="mailto:'+escHtml(r.email||'')+'">'+escHtml(r.email||'')+'</a><button class="acc-copy" title="Copier" onclick="copyText(event,\''+escHtml(r.email||'')+'\')">⧉</button></div></div>'
+          + '<div class="is-row"><span class="is-lbl">Email</span><div class="is-vals"><a class="is-mail" href="mailto:'+escHtml(r.email||'')+'">'+escHtml(r.email||'')+'</a><button class="acc-copy" title="Copier" data-copy="'+escHtml(r.email||'')+'" onclick="copyText(event,this.getAttribute(\'data-copy\'))">⧉</button></div></div>'
           + '<div class="is-row"><span class="is-lbl">CP / Matricule</span><div class="is-vals"><span class="is-code">'+escHtml(r.cp||'—')+'</span></div></div>'
           + '<div class="is-row"><span class="is-lbl">Demandé le</span><div class="is-vals"><span class="esc-cas">'+d+'</span></div></div>'
           + (done?'':'<button class="pt-add" style="margin-top:10px;width:100%" onclick="markRequestDone(\''+r.id+'\')">✓ Marquer comme validée</button>')
@@ -3019,7 +3025,7 @@
       const { error } = await supa.from('access_requests').update({ status:'validee' }).eq('id',id);
       if(error) throw error;
       loadAccessRequests();
-    }catch(e){ alert('Mise à jour impossible : '+(e.message||'')); }
+    }catch(e){ console.error(e); alert('Mise à jour impossible pour le moment. Réessayez.'); }
   }
   function copyText(ev, txt){
     if(ev) ev.stopPropagation();
@@ -3039,19 +3045,31 @@
   async function doRequest(){
     const email=_v('reqEmail').trim().toLowerCase(), cp=_v('reqCp').trim(), nom=_v('reqNom').trim(), prenom=_v('reqPrenom').trim();
     if(!email||!cp||!nom||!prenom){ _msg('reqMsg','Tous les champs sont obligatoires.','err'); return; }
-    if(!/@reseau\.sncf\.fr$/.test(email)){ _msg('reqMsg','Utilisez votre adresse professionnelle @reseau.sncf.fr.','err'); return; }
+    if(email.length>80 || !/^[a-z0-9][a-z0-9._-]*@reseau\.sncf\.fr$/.test(email)){ _msg('reqMsg','Utilisez votre adresse professionnelle @reseau.sncf.fr.','err'); return; }
+    if(!/^[0-9A-Za-z]{4,12}$/.test(cp)){ _msg('reqMsg','CP / matricule invalide (4 à 12 caractères alphanumériques).','err'); return; }
+    const nameRe=/^[A-Za-zÀ-ÖØ-öø-ÿ' -]{1,40}$/;
+    if(!nameRe.test(nom)||!nameRe.test(prenom)){ _msg('reqMsg','Nom ou prénom invalide.','err'); return; }
     if(!supaOk){ _msg('reqMsg','Service indisponible, réessayez plus tard.','err'); return; }
     _busy('reqBtn',true);
     const { error } = await supa.from('access_requests').insert({ email:email, cp:cp, nom:nom, prenom:prenom });
     _busy('reqBtn',false);
-    if(error){ _msg('reqMsg','Envoi impossible : '+(error.message||''),'err'); return; }
+    if(error){ console.error(error); _msg('reqMsg','Envoi impossible pour le moment. Réessayez.','err'); return; }
     _msg('reqMsg','','');
     document.getElementById('reqForm').style.display='none';
     document.getElementById('reqDone').style.display='block';
   }
+  function pwPolicyError(p){
+    if(p.length<12) return '12 caractères minimum.';
+    if(!/[a-z]/.test(p)) return 'Ajoutez au moins une minuscule.';
+    if(!/[A-Z]/.test(p)) return 'Ajoutez au moins une majuscule.';
+    if(!/[0-9]/.test(p)) return 'Ajoutez au moins un chiffre.';
+    if(!/[^A-Za-z0-9]/.test(p)) return 'Ajoutez au moins un caractère spécial.';
+    return null;
+  }
   async function doChangePw(){
     const p1=_v('newPw'), p2=_v('newPw2');
-    if(p1.length<8){ _msg('pwMsg','8 caractères minimum.','err'); return; }
+    const perr=pwPolicyError(p1);
+    if(perr){ _msg('pwMsg',perr,'err'); return; }
     if(p1!==p2){ _msg('pwMsg','Les deux mots de passe ne correspondent pas.','err'); return; }
     _busy('pwBtn',true);
     const { error } = await supa.auth.updateUser({ password:p1 });
@@ -3059,12 +3077,44 @@
       try{ const { data:{ user } } = await supa.auth.getUser(); if(user) await supa.from('profiles').update({ must_change_password:false }).eq('id',user.id); }catch(e){}
     }
     _busy('pwBtn',false);
-    if(error){ _msg('pwMsg','Erreur : '+(error.message||''),'err'); return; }
+    if(error){ console.error(error); _msg('pwMsg','Impossible de changer le mot de passe. Réessayez.','err'); return; }
     hideGate();
+  }
+  // ===== Expiration de session : inactivité 20 min + durée max 8 h (SESS-002/003) =====
+  let _inactTimer=null, _absTimer=null, _sessionStart=0;
+  const INACT_MS=20*60*1000, MAX_MS=8*60*60*1000;
+  function _resetInactivity(){
+    if(!document.body.classList.contains('authed')) return;
+    clearTimeout(_inactTimer);
+    _inactTimer=setTimeout(function(){ forceLogout("Session fermée après 20 minutes d'inactivité."); }, INACT_MS);
+  }
+  function startSessionTimers(){
+    let st=+(localStorage.getItem('bn_session_start')||0);
+    if(!st){ st=Date.now(); try{ localStorage.setItem('bn_session_start', String(st)); }catch(e){} }
+    _sessionStart=st;
+    if(Date.now()-_sessionStart > MAX_MS){ forceLogout('Session expirée (8 h). Reconnectez-vous.'); return; }
+    ['click','keydown','mousemove','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,_resetInactivity,{passive:true}));
+    _resetInactivity();
+    clearInterval(_absTimer);
+    _absTimer=setInterval(function(){
+      if(document.body.classList.contains('authed') && (Date.now()-_sessionStart > MAX_MS)){
+        forceLogout('Session expirée (8 h). Reconnectez-vous.');
+      }
+    }, 60*1000);
+  }
+  function stopSessionTimers(){ clearTimeout(_inactTimer); clearInterval(_absTimer); }
+  function forceLogout(reason){
+    try{ if(supaOk) supa.auth.signOut(); }catch(e){}
+    try{ localStorage.removeItem('bn_session_start'); }catch(e){}
+    stopSessionTimers();
+    showGate('login');
+    _msg('loginMsg', reason||'Session expirée, reconnectez-vous.','err');
   }
   async function doLogout(){
     if(!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return;
     try{ if(supaOk) await supa.auth.signOut(); }catch(e){}
+    try{ localStorage.removeItem('bn_session_start'); }catch(e){}
+    stopSessionTimers();
     showGate('login');
   }
   initAuth();
