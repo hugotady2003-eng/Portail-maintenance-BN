@@ -794,6 +794,59 @@
   .rap-auto-item{padding:11px 14px;font-size:13.5px;font-weight:600;color:var(--anthracite);cursor:pointer;border-bottom:1px solid #f0f1f4;}
   .rap-auto-item:last-child{border-bottom:none;}
   .rap-auto-item:active,.rap-auto-item:hover{background:#f4f0fe;color:var(--violet-vin);}
+  /* ===== Astreinte : onglets + dérangements ===== */
+  .ast-tabs{display:flex;gap:8px;padding:14px 16px 4px;}
+  .ast-tab{flex:1;border:1px solid rgba(255,255,255,.6);border-radius:12px;padding:11px 8px;font-family:inherit;font-size:13.5px;font-weight:800;
+    color:var(--texte2);background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);
+    cursor:pointer;transition:color .2s,background .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent;}
+  .ast-tab.active{background:var(--carmillon);border-color:var(--carmillon);color:#fff;box-shadow:0 4px 14px rgba(195,0,103,.32);}
+  .ast-panel{display:none;} .ast-panel.active{display:block;}
+  /* champs début/fin sur deux colonnes */
+  .der-2col{display:flex;gap:18px;}
+  .der-2col>div{flex:1;min-width:0;}
+  .der-2col .rap-input{width:100%;box-sizing:border-box;}
+  /* sélecteur texte / vocal */
+  .der-mode{display:flex;gap:8px;margin-bottom:8px;}
+  .der-mode-btn{flex:1;border:1px solid var(--gris-bord);background:#fff;border-radius:10px;padding:9px;font-family:inherit;font-size:13px;font-weight:800;color:var(--texte2);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+  .der-mode-btn.active{background:var(--carmillon);border-color:var(--carmillon);color:#fff;box-shadow:0 3px 10px rgba(195,0,103,.28);}
+  /* enregistreur vocal */
+  .der-vocal{border:1px dashed var(--gris-bord);border-radius:12px;padding:14px;background:#fbfbfd;}
+  .der-rec-start{width:100%;border:none;border-radius:11px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;color:#fff;
+    background:linear-gradient(105deg,#c30067,#800064);cursor:pointer;box-shadow:0 4px 12px rgba(195,0,103,.3);display:flex;align-items:center;justify-content:center;gap:8px;}
+  .der-mic{font-size:17px;}
+  .der-rec-hint{font-size:11px;color:var(--texte2);text-align:center;margin-top:8px;}
+  .der-rec-live{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;font-weight:800;color:#b42318;}
+  .der-rec-dot{width:11px;height:11px;border-radius:50%;background:#e5352b;animation:derPulse 1s ease-in-out infinite;}
+  @keyframes derPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.8);}}
+  .der-rec-time{font-variant-numeric:tabular-nums;color:var(--anthracite);}
+  .der-bars{display:flex;align-items:flex-end;justify-content:center;gap:4px;height:34px;margin:12px 0;}
+  .der-bars i{width:5px;height:8px;border-radius:3px;background:linear-gradient(180deg,#c30067,#800064);animation:derBar .9s ease-in-out infinite;}
+  .der-bars i:nth-child(2){animation-delay:.1s} .der-bars i:nth-child(3){animation-delay:.2s} .der-bars i:nth-child(4){animation-delay:.3s}
+  .der-bars i:nth-child(5){animation-delay:.15s} .der-bars i:nth-child(6){animation-delay:.25s} .der-bars i:nth-child(7){animation-delay:.05s}
+  @keyframes derBar{0%,100%{height:8px}50%{height:30px}}
+  .der-rec-stop{width:100%;border:1px solid var(--carmillon);background:#fff;color:var(--carmillon);border-radius:11px;padding:11px;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;}
+  .der-rec-redo{width:100%;margin-top:9px;border:1px solid var(--gris-bord);background:#fff;color:var(--texte2);border-radius:10px;padding:9px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  /* lecteur audio (aperçu + liste) */
+  .der-player{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--gris-bord);border-radius:11px;padding:9px 12px;}
+  .der-play{flex-shrink:0;width:38px;height:38px;border-radius:50%;border:none;background:linear-gradient(135deg,#c30067,#800064);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(195,0,103,.3);-webkit-tap-highlight-color:transparent;}
+  .der-play.loading{opacity:.6;}
+  .der-prog{flex:1;height:7px;border-radius:5px;background:rgba(15,23,42,.1);overflow:hidden;cursor:pointer;}
+  .der-prog-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#c30067,#800064);transition:width .1s linear;}
+  .der-time{flex-shrink:0;font-size:11.5px;font-weight:800;color:var(--texte2);font-variant-numeric:tabular-nums;min-width:34px;text-align:right;}
+  /* carte de dérangement dans la liste */
+  .der-card{border-radius:14px;border:1px solid var(--gris-bord);background:#fff;padding:13px 14px;margin-bottom:11px;box-shadow:0 3px 10px rgba(15,23,42,.05);}
+  .der-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .der-cat{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:#fff;background:var(--carmillon);border-radius:7px;padding:3px 9px;}
+  .der-lieu{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--texte2);background:var(--gris-bg);border:1px solid var(--gris-bord);border-radius:7px;padding:3px 8px;}
+  .der-when{font-size:11.5px;color:var(--texte2);margin-bottom:8px;line-height:1.45;}
+  .der-when b{color:var(--anthracite);}
+  .der-desc{font-size:13px;color:var(--texte);line-height:1.5;white-space:pre-wrap;}
+  .der-by{margin-top:9px;font-size:11px;font-weight:700;color:var(--violet-vin);}
+  .der-filter-wrap{padding:2px 16px 6px;}
+  .der-filter-wrap .rap-input{width:100%;box-sizing:border-box;}
+  .der-head{position:relative;}
+  .der-del{margin-left:auto;background:none;border:none;color:var(--gris-clair);font-size:15px;cursor:pointer;padding:3px 5px;border-radius:6px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;}
+  .der-del:hover{color:#b42318;background:rgba(180,35,24,.08);}
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -938,7 +991,6 @@
       <div class="hello">Espace Maintenance</div>
       <h1>Accès rapide à vos outils</h1>
       <p>Sélectionnez une application ou une ressource</p>
-      <button class="ver-badge" onclick="go('changelog')" id="verBadge">v1.0 · Nouveautés</button>
     </div>
 
     <!-- Modules internes (sous-pages) -->
@@ -962,7 +1014,7 @@
       <div class="group-title"><span class="dot"></span>Administratif et sécurité</div>
       <div class="list">
         <a class="row b-violet" href="https://prod.asr.reseau.sncf.fr/login" target="_blank" rel="noopener noreferrer"><div class="ic">🎬</div><div class="tx"><div class="lbl">EVS</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
-        <a class="row b-violet" href="https://optimum.sncf.fr/chronotime/index.html#z/coll" target="_blank" rel="noopener noreferrer"><div class="ic">🕐</div><div class="tx"><div class="lbl">OPTIMUM</div><div class="sub">Chronotime</div></div><span class="ext">↗ EXTERNE</span></a>
+        <a class="row b-violet" href="https://sncf.chronotime.isoftcloud.cloud/chronotime/" target="_blank" rel="noopener noreferrer"><div class="ic">🕐</div><div class="tx"><div class="lbl">OPTIMUM</div><div class="sub">Chronotime</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-violet" href="https://agence-paie-et-famille.sncf.fr/site/" target="_blank" rel="noopener noreferrer"><div class="ic">💶</div><div class="tx"><div class="lbl">OPTIM'SERVICES</div><div class="sub">Agence Paie et Famille</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-violet" href="https://interface-salarie.sncf.fr/accueil" target="_blank" rel="noopener noreferrer"><div class="ic">👤</div><div class="tx"><div class="lbl">OPTIM'SERVICES</div><div class="sub">Interface salarié</div></div><span class="ext">↗ EXTERNE</span></a>
         <a class="row b-violet" href="https://sncf.sharepoint.com/:f:/s/infrapole_normandie_asti_telecomsGrpO365/IgCz06lHGpygQLrCFDEyXUTVAeCKH77P2zhjAIQQ_qZH6Pc?e=b2eYt5" target="_blank" rel="noopener noreferrer"><div class="ic">📋</div><div class="tx"><div class="lbl">Réunion de secteur</div><div class="sub">Comptes-rendus &amp; documents</div></div><span class="ext">↗ EXTERNE</span></a>
@@ -1117,11 +1169,22 @@
       <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
       <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
       <h2>Astreinte / Code d'accès</h2>
-      <p>Liens vers fichiers Excel mis à jour</p>
+      <p>Codes d'accès &amp; journal des dérangements</p>
     </div>
-    <div class="links">
-      <div class="lk" style="--accent:var(--carmillon);cursor:pointer;" onclick="go('numartes')"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go">→</span></div>
-      <a class="lk" style="--accent:var(--carmillon)" href="https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9/Code%20d%27acc%C3%A9s/Code_d%27acc%C3%A9s.xlsx?d=wafc1c76d91f94eac93b2b48fc9839793&csf=1&web=1&e=aybRkZ" target="_blank" rel="noopener noreferrer"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
+    <div class="ast-tabs">
+      <button class="ast-tab active" id="astTabCodes" onclick="astTab('codes')">Codes &amp; astreinte</button>
+      <button class="ast-tab" id="astTabDerang" onclick="astTab('derang')">Dérangements</button>
+    </div>
+    <div id="ast-codes" class="ast-panel active">
+      <div class="links">
+        <div class="lk" style="--accent:var(--carmillon);cursor:pointer;" onclick="go('numartes')"><div class="ic">📞</div><div class="lbl">Numéro d'astreinte</div><span class="go">→</span></div>
+        <a class="lk" style="--accent:var(--carmillon)" href="https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9/Code%20d%27acc%C3%A9s/Code_d%27acc%C3%A9s.xlsx?d=wafc1c76d91f94eac93b2b48fc9839793&csf=1&web=1&e=aybRkZ" target="_blank" rel="noopener noreferrer"><div class="ic">🔐</div><div class="lbl">Code d'accès</div><span class="go">↗</span></a>
+      </div>
+    </div>
+    <div id="ast-derang" class="ast-panel">
+      <div class="rap-toolbar"><button class="rap-create" onclick="openDerangModal()">＋ Signaler un dérangement</button></div>
+      <div class="der-filter-wrap"><select id="derFilter" class="rap-input" onchange="renderDerangements()"><option value="">Toutes les catégories</option></select></div>
+      <div class="rap-list" id="derangList"><div class="acc-empty">Chargement…</div></div>
     </div>
   </div>
 
@@ -1200,6 +1263,60 @@
       <div class="pt-modal-btns">
         <button class="pt-cancel" onclick="closeRappelModal()">Annuler</button>
         <button class="pt-add" id="rapOkBtn" onclick="confirmRappel()">Créer le rappel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal : signaler un dérangement d'astreinte -->
+  <div id="derangModal" class="pt-modal" style="display:none;">
+    <div class="pt-modal-card">
+      <div class="pt-modal-title">Signaler un dérangement</div>
+      <label class="rap-lbl">Catégorie</label>
+      <select id="derCat" class="rap-input" onchange="derCatChange()"></select>
+      <input id="derCatAutre" class="rap-input" type="text" placeholder="Précisez la catégorie…" maxlength="60" style="display:none;margin-top:6px;">
+      <label class="rap-lbl">Lieu</label>
+      <div class="rap-auto">
+        <input id="derLieuInput" class="rap-input" type="text" autocomplete="off" placeholder="Gare ou autre lieu…"
+               oninput="derLieuSuggest()" onfocus="derLieuSuggest()"
+               onblur="setTimeout(function(){var l=document.getElementById('derLieuList');if(l)l.style.display='none';},160)">
+        <div class="rap-auto-list" id="derLieuList" style="display:none;"></div>
+      </div>
+      <div class="der-2col">
+        <div><label class="rap-lbl">Début</label><input id="derDebut" class="rap-input" type="datetime-local"></div>
+        <div><label class="rap-lbl">Fin</label><input id="derFin" class="rap-input" type="datetime-local"></div>
+      </div>
+      <label class="rap-lbl">Compte rendu</label>
+      <div class="der-mode">
+        <button type="button" class="der-mode-btn active" id="derModeTxt" onclick="derSetMode('texte')">✍️ Écrit</button>
+        <button type="button" class="der-mode-btn" id="derModeVoc" onclick="derSetMode('vocal')">🎙️ Vocal</button>
+      </div>
+      <textarea id="derTexte" class="rap-input rap-textarea" placeholder="Décrivez ce qu'il s'est passé…" maxlength="1000"></textarea>
+      <div id="derVocal" class="der-vocal" style="display:none;">
+        <!-- état repos -->
+        <div id="derRecIdle" class="der-rec-idle">
+          <button type="button" class="der-rec-start" onclick="derStartRec()"><span class="der-mic">🎙️</span> Démarrer l'enregistrement</button>
+          <div class="der-rec-hint">Autorisez l'accès au micro à la première utilisation.</div>
+        </div>
+        <!-- état enregistrement -->
+        <div id="derRecOn" class="der-rec-on" style="display:none;">
+          <div class="der-rec-live"><span class="der-rec-dot"></span> Enregistrement… <span id="derRecTime" class="der-rec-time">0:00</span></div>
+          <div class="der-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <button type="button" class="der-rec-stop" onclick="derStopRec()">⏹️ Arrêter</button>
+        </div>
+        <!-- aperçu -->
+        <div id="derRecDone" class="der-rec-done" style="display:none;">
+          <div class="der-player">
+            <button type="button" class="der-play" id="derPvPlay" onclick="derPreviewToggle()">▶</button>
+            <div class="der-prog" id="derPvProgWrap"><div class="der-prog-fill" id="derPvFill"></div></div>
+            <span class="der-time" id="derPvTime">0:00</span>
+          </div>
+          <button type="button" class="der-rec-redo" onclick="derResetRec()">↺ Recommencer</button>
+        </div>
+      </div>
+      <div id="derMsg" class="rap-msg"></div>
+      <div class="pt-modal-btns">
+        <button class="pt-cancel" onclick="closeDerangModal()">Annuler</button>
+        <button class="pt-add" id="derOkBtn" onclick="confirmDerang()">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -1355,7 +1472,8 @@
     {e:'🔒',n:'Sûreté',        fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_N_Dispositif_T%C3%A9l%C3%A9com_de_s%C3%BBret%C3%A9?csf=1&web=1&e=sHWBca', guide:'https://reseaudoc.reseau.sncf.fr/livelink/livelink.exe/app/nodes/34424456?tab=1'},
     {e:'⚡',n:'Énergie',       guide:'https://reseaudoc.reseau.sncf.fr/livelink/livelink.exe/app/nodes/34424457?tab=1', fichesLinks:[
       {t:'Atelier énergie Télécom', u:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_P_Atelier_%C3%A9nergie_T%C3%A9l%C3%A9com?csf=1&web=1&e=fhzgdn'},
-      {t:'Mise à jour consommation', u:'http://alimentation.mn.sncf.fr/controller/alimentation/alimentation.php?page=edit'}
+      {t:'Mise à jour consommation', u:'http://alimentation.mn.sncf.fr/controller/alimentation/alimentation.php?page=edit'},
+      {t:'IP ALIM SAFT_BN', u:'https://sncf.sharepoint.com/:x:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_Tous%20sites/_P_Atelier_%C3%A9nergie_T%C3%A9l%C3%A9com/1.Commun_HN_BN/Recensement_alim_BN/IP%20ALIM%20SAFT_BN.xls?d=wd69d9abead74575288bee7c91bea78d3&csf=1&web=1&e=WZFSdv'}
     ]},
     {e:'📶',n:'GSM-R',         fiches:'https://sncf.sharepoint.com/:f:/r/sites/infrapole_normandie_asti_commun/Documents%20partages/Aide_A_La_Maintenance/_BN/_J_GSMR/Maintenance?csf=1&web=1&e=QiFUUO', guide:'https://reseaudoc.reseau.sncf.fr/livelink/livelink.exe/app/nodes/34424114?tab=1'},
     {e:'📡',n:'Transmission',  guide:'https://reseaudoc.reseau.sncf.fr/livelink/livelink.exe/app/nodes/34424306?tab=1', fichesLinks:[
@@ -2745,6 +2863,19 @@
     _garesUnique=Object.keys(map).map(k=>map[k]).sort((a,b)=>a.n.localeCompare(b.n,'fr'));
     return _garesUnique;
   }
+  // Liste combinée des lieux : gares (🚉) + points GSM-R / BTS de la 366000 (📡)
+  let _lieuxList=null, _lieuType={};
+  function allLieux(){
+    if(_lieuxList) return _lieuxList;
+    const map={};
+    allGaresUnique().forEach(g=>{ if(!map[g.n]){ map[g.n]={n:g.n,type:'gare'}; _lieuType[g.n]='gare'; } });
+    try{
+      (gsmrLignes[0].points||[]).forEach(p=>{ if(!map[p.n]){ map[p.n]={n:p.n,type:'bts'}; _lieuType[p.n]='bts'; } });
+    }catch(e){}
+    _lieuxList=Object.keys(map).map(k=>map[k]).sort((a,b)=>a.n.localeCompare(b.n,'fr'));
+    return _lieuxList;
+  }
+  function lieuIcon(name){ return _lieuType[name]==='bts' ? '📡' : '🚉'; }
   function userPrenom(){
     const lp=(currentUserEmail||'').split('@')[0]||'';
     const first=lp.split(/[._-]/)[0]||'';
@@ -2814,7 +2945,7 @@
       const body = items.length ? items.map(rapItemHtml).join('') : '<div class="rap-empty-body">Aucun rappel sur cette gare.</div>';
       return '<div class="rap-gare'+(open?' open':'')+'" data-gare="'+escHtml(g.n)+'">'
         + '<div class="rap-gare-head" onclick="toggleRapGareEl(this)">'
-        +   '<div class="rap-gare-ic">🚉</div>'
+        +   '<div class="rap-gare-ic">'+lieuIcon(g.n)+'</div>'
         +   '<div class="rap-gare-info"><div class="rap-gare-name">'+escHtml(g.n)+'</div></div>'
         +   badge
         +   '<svg class="rap-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>'
@@ -2874,12 +3005,12 @@
     const list=document.getElementById('rapGareList');
     const hid=document.getElementById('rapGare');
     const q=(inp.value||'').toLowerCase().trim();
-    const gares=allGaresUnique();
+    const gares=allLieux();
     const exact=gares.find(g=>g.n.toLowerCase()===q);
     hid.value = exact ? exact.n : '';
     let matches = q ? gares.filter(g=>g.n.toLowerCase().includes(q)) : gares.slice(0,40);
     if(!matches.length){ list.style.display='none'; return; }
-    list.innerHTML=matches.slice(0,40).map(g=>'<div class="rap-auto-item" data-name="'+escHtml(g.n)+'" onmousedown="rapPickGareEl(this)" ontouchstart="rapPickGareEl(this)">🚉 '+escHtml(g.n)+'</div>').join('');
+    list.innerHTML=matches.slice(0,40).map(g=>'<div class="rap-auto-item" data-name="'+escHtml(g.n)+'" onmousedown="rapPickGareEl(this)" ontouchstart="rapPickGareEl(this)">'+(g.type==='bts'?'📡':'🚉')+' '+escHtml(g.n)+'</div>').join('');
     list.style.display='block';
   }
   function rapPickGareEl(el){
@@ -2893,7 +3024,7 @@
   async function confirmRappel(){
     let gare=document.getElementById('rapGare').value;
     if(!gare){ const typed=(document.getElementById('rapGareInput').value||'').trim();
-      const ex=allGaresUnique().find(g=>g.n.toLowerCase()===typed.toLowerCase()); if(ex) gare=ex.n; }
+      const ex=allLieux().find(g=>g.n.toLowerCase()===typed.toLowerCase()); if(ex) gare=ex.n; }
     const prenom=userPrenom();
     const titre=(document.getElementById('rapTitre').value||'').trim().slice(0,80);
     const texte=(document.getElementById('rapTexte').value||'').trim().slice(0,500);
@@ -2934,6 +3065,248 @@
     const b=document.getElementById('rappelHomeBadge'); const dot=document.getElementById('rappelHomeDot');
     if(b){ if(n>0){ b.style.display='inline-flex'; b.textContent=n; } else b.style.display='none'; }
     if(dot){ dot.style.display = n>0 ? 'block' : 'none'; }
+  }
+  // ===== Dérangements d'astreinte (collaboratif + message vocal) =====
+  const DER_BUCKET='derangements-audio';
+  let derangData=[], _derSub=false, _derMode='texte';
+  let _derRec=null, _derChunks=[], _derStream=null, _derBlob=null, _derMime='', _derTimer=null, _derSec=0, _derDur=0;
+  let _derPvAudio=null, _derNow=null, _derNowBtn=null;
+  function astTab(which){
+    const c=which==='codes';
+    document.getElementById('ast-codes').classList.toggle('active', c);
+    document.getElementById('ast-derang').classList.toggle('active', !c);
+    document.getElementById('astTabCodes').classList.toggle('active', c);
+    document.getElementById('astTabDerang').classList.toggle('active', !c);
+    if(!c) loadDerangements();
+  }
+  function fmtClock(s){ s=Math.max(0,Math.round(s)); const m=Math.floor(s/60); return m+':'+String(s%60).padStart(2,'0'); }
+  function fmtDateTimeFr(iso){ try{ const d=new Date(iso); if(isNaN(d.getTime())) return ''; return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+  function fmtDurationBetween(a,b){ try{ const ms=new Date(b)-new Date(a); if(isNaN(ms)||ms<0) return ''; const min=Math.round(ms/60000); if(min<60) return min+' min'; const h=Math.floor(min/60), m=min%60; return h+' h'+(m?(' '+m):''); }catch(e){ return ''; } }
+  function nowLocalInput(off){ const d=new Date(); if(off) d.setMinutes(d.getMinutes()+off); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+
+  function openDerangModal(){
+    const sel=document.getElementById('derCat');
+    const cats=(typeof domains!=='undefined'?domains.map(d=>d.n):[]).concat(['Autre']);
+    sel.innerHTML='<option value="">— Choisir —</option>'+cats.map(c=>'<option value="'+escHtml(c)+'">'+escHtml(c)+'</option>').join('');
+    document.getElementById('derCatAutre').style.display='none';
+    document.getElementById('derCatAutre').value='';
+    document.getElementById('derLieuInput').value='';
+    document.getElementById('derTexte').value='';
+    document.getElementById('derDebut').value=nowLocalInput(0);
+    document.getElementById('derFin').value=nowLocalInput(0);
+    _msgDer('');
+    derResetRec();
+    derSetMode('texte');
+    document.getElementById('derangModal').style.display='flex';
+  }
+  function closeDerangModal(){ derStopStream(); const m=document.getElementById('derangModal'); if(m) m.style.display='none'; }
+  function _msgDer(t,k){ const m=document.getElementById('derMsg'); if(m){ m.textContent=t||''; m.className='rap-msg'+(k?(' '+k):''); } }
+  function derCatChange(){
+    const v=document.getElementById('derCat').value;
+    document.getElementById('derCatAutre').style.display = (v==='Autre') ? 'block' : 'none';
+  }
+  function derLieuSuggest(){
+    const inp=document.getElementById('derLieuInput'), list=document.getElementById('derLieuList');
+    const q=(inp.value||'').toLowerCase().trim();
+    const gares=(typeof allLieux==='function')?allLieux():[];
+    let matches = q ? gares.filter(g=>g.n.toLowerCase().includes(q)) : gares.slice(0,40);
+    if(!matches.length){ list.style.display='none'; return; }
+    list.innerHTML=matches.slice(0,40).map(g=>'<div class="rap-auto-item" data-name="'+escHtml(g.n)+'" onmousedown="derPickLieuEl(this)" ontouchstart="derPickLieuEl(this)">'+(g.type==='bts'?'📡':'🚉')+' '+escHtml(g.n)+'</div>').join('');
+    list.style.display='block';
+  }
+  function derPickLieuEl(el){ document.getElementById('derLieuInput').value=el.getAttribute('data-name'); const l=document.getElementById('derLieuList'); if(l) l.style.display='none'; }
+  function derSetMode(m){
+    _derMode=m;
+    const t=m==='texte';
+    document.getElementById('derModeTxt').classList.toggle('active', t);
+    document.getElementById('derModeVoc').classList.toggle('active', !t);
+    document.getElementById('derTexte').style.display = t ? 'block' : 'none';
+    document.getElementById('derVocal').style.display = t ? 'none' : 'block';
+  }
+  // --- enregistrement ---
+  function _pickMime(){
+    const cands=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported){ for(const c of cands){ if(MediaRecorder.isTypeSupported(c)) return c; } }
+    return '';
+  }
+  async function derStartRec(){
+    if(!navigator.mediaDevices || !window.MediaRecorder){ _msgDer("L'enregistrement audio n'est pas supporté sur cet appareil.",'err'); return; }
+    try{
+      _derStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    }catch(e){ console.error(e); _msgDer("Accès au micro refusé.",'err'); return; }
+    _derChunks=[]; _derBlob=null; _derMime=_pickMime();
+    try{ _derRec = _derMime ? new MediaRecorder(_derStream,{mimeType:_derMime}) : new MediaRecorder(_derStream); }
+    catch(e){ _derRec = new MediaRecorder(_derStream); }
+    _derMime=_derRec.mimeType||_derMime||'audio/webm';
+    _derRec.ondataavailable=ev=>{ if(ev.data && ev.data.size) _derChunks.push(ev.data); };
+    _derRec.onstop=()=>{
+      _derBlob=new Blob(_derChunks,{type:_derMime});
+      _derDur=_derSec;
+      derStopStream();
+      document.getElementById('derRecOn').style.display='none';
+      document.getElementById('derRecIdle').style.display='none';
+      document.getElementById('derRecDone').style.display='block';
+      document.getElementById('derPvTime').textContent=fmtClock(_derDur);
+      document.getElementById('derPvFill').style.width='0%';
+      document.getElementById('derPvPlay').textContent='▶';
+    };
+    _derRec.start();
+    _derSec=0; document.getElementById('derRecTime').textContent='0:00';
+    clearInterval(_derTimer);
+    _derTimer=setInterval(()=>{ _derSec++; document.getElementById('derRecTime').textContent=fmtClock(_derSec);
+      if(_derSec>=300){ derStopRec(); } // garde-fou : 5 min max
+    },1000);
+    document.getElementById('derRecIdle').style.display='none';
+    document.getElementById('derRecDone').style.display='none';
+    document.getElementById('derRecOn').style.display='block';
+  }
+  function derStopRec(){ clearInterval(_derTimer); try{ if(_derRec && _derRec.state!=='inactive') _derRec.stop(); }catch(e){} }
+  function derStopStream(){ try{ if(_derStream){ _derStream.getTracks().forEach(t=>t.stop()); _derStream=null; } }catch(e){} }
+  function derResetRec(){
+    derStopRec(); derStopStream();
+    _derBlob=null; _derChunks=[]; _derSec=0; _derDur=0;
+    if(_derPvAudio){ try{ _derPvAudio.pause(); }catch(e){} _derPvAudio=null; }
+    const on=document.getElementById('derRecOn'), idle=document.getElementById('derRecIdle'), done=document.getElementById('derRecDone');
+    if(on) on.style.display='none'; if(done) done.style.display='none'; if(idle) idle.style.display='block';
+  }
+  function derPreviewToggle(){
+    if(!_derBlob) return;
+    if(!_derPvAudio){
+      _derPvAudio=new Audio(URL.createObjectURL(_derBlob));
+      _derPvAudio.ontimeupdate=()=>{ const d=_derDur||_derPvAudio.duration||1; const pct=Math.min(100,(_derPvAudio.currentTime/d)*100); document.getElementById('derPvFill').style.width=pct+'%'; document.getElementById('derPvTime').textContent=fmtClock(d-_derPvAudio.currentTime); };
+      _derPvAudio.onended=()=>{ document.getElementById('derPvPlay').textContent='▶'; document.getElementById('derPvFill').style.width='0%'; document.getElementById('derPvTime').textContent=fmtClock(_derDur); };
+    }
+    if(_derPvAudio.paused){ _derPvAudio.play(); document.getElementById('derPvPlay').textContent='⏸'; }
+    else { _derPvAudio.pause(); document.getElementById('derPvPlay').textContent='▶'; }
+  }
+  // --- enregistrement DB + upload ---
+  async function confirmDerang(){
+    let cat=document.getElementById('derCat').value;
+    if(cat==='Autre'){ cat=(document.getElementById('derCatAutre').value||'').trim().slice(0,60); }
+    const lieu=(document.getElementById('derLieuInput').value||'').trim().slice(0,80);
+    const debut=document.getElementById('derDebut').value, fin=document.getElementById('derFin').value;
+    const texte=(document.getElementById('derTexte').value||'').trim().slice(0,1000);
+    if(!cat){ _msgDer('Choisissez une catégorie.','err'); return; }
+    if(!debut){ _msgDer("Indiquez l'heure de début.",'err'); return; }
+    if(_derMode==='texte' && !texte){ _msgDer('Écrivez le compte rendu ou passez en vocal.','err'); return; }
+    if(_derMode==='vocal' && !_derBlob){ _msgDer('Enregistrez un message vocal.','err'); return; }
+    if(!supaOk){ _msgDer('Indisponible en mode aperçu.','err'); return; }
+    _busy('derOkBtn',true);
+    try{
+      let audio_path=null, audio_duree=null;
+      if(_derMode==='vocal' && _derBlob){
+        const ext = _derMime.includes('mp4')?'mp4':(_derMime.includes('ogg')?'ogg':'webm');
+        const id = (window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(16).slice(2));
+        audio_path = id+'.'+ext;
+        const up = await supa.storage.from(DER_BUCKET).upload(audio_path, _derBlob, {contentType:_derMime, upsert:false});
+        if(up.error) throw up.error;
+        audio_duree=_derDur;
+      }
+      const row={ categorie:cat, lieu:lieu||null,
+        debut: new Date(debut).toISOString(),
+        fin: fin ? new Date(fin).toISOString() : null,
+        description: _derMode==='texte'?texte:null,
+        audio_path:audio_path, audio_duree:audio_duree,
+        prenom:userPrenom()||null, auteur_email:currentUserEmail||null };
+      const { error } = await supa.from('derangements').insert(row);
+      if(error) throw error;
+      _msgDer('✓ Dérangement enregistré','ok');
+      await loadDerangements();
+      _busy('derOkBtn',false);
+      setTimeout(closeDerangModal, 500);
+    }catch(e){ console.error(e); _msgDer("Échec de l'enregistrement. Réessayez.",'err'); _busy('derOkBtn',false); }
+  }
+  // --- liste ---
+  async function loadDerangements(){
+    const el=document.getElementById('derangList'); if(!el) return;
+    if(!supaOk){ renderDerangements(); return; }
+    try{
+      const { data, error } = await supa.from('derangements').select('*').order('debut',{ascending:false});
+      if(error) throw error;
+      derangData=data||[];
+    }catch(e){ console.error(e); el.innerHTML='<div class="acc-empty">Lecture impossible pour le moment.</div>'; return; }
+    if(!_derSub){ _derSub=true; try{ supa.channel('derangements-rt').on('postgres_changes',{event:'*',schema:'public',table:'derangements'},()=>{ loadDerangements(); }).subscribe(); }catch(e){} }
+    renderDerangements();
+  }
+  function renderDerangements(){
+    const el=document.getElementById('derangList'); if(!el) return;
+    // remplir la liste déroulante de filtre avec les catégories présentes
+    const fsel=document.getElementById('derFilter');
+    if(fsel){
+      const cats=[]; derangData.forEach(d=>{ if(d.categorie && cats.indexOf(d.categorie)<0) cats.push(d.categorie); });
+      cats.sort((a,b)=>a.localeCompare(b,'fr'));
+      const cur=fsel.value;
+      fsel.innerHTML='<option value="">Toutes les catégories</option>'+cats.map(c=>'<option value="'+escHtml(c)+'"'+(c===cur?' selected':'')+'>'+escHtml(c)+'</option>').join('');
+    }
+    const filter=fsel?fsel.value:'';
+    let rows=derangData.slice();
+    if(filter) rows=rows.filter(d=>d.categorie===filter);
+    if(!rows.length){ el.innerHTML='<div class="acc-empty">'+(filter?'Aucun dérangement dans cette catégorie.':'Aucun dérangement signalé. Touchez « Signaler un dérangement ».')+'</div>'; return; }
+    el.innerHTML=rows.map(d=>{
+      const per = fmtDateTimeFr(d.debut) + (d.fin?(' → '+fmtDateTimeFr(d.fin)):'') ;
+      const dur = d.fin ? fmtDurationBetween(d.debut,d.fin) : '';
+      const lieu = d.lieu ? '<span class="der-lieu">📍 '+escHtml(d.lieu)+'</span>' : '';
+      const canDel = (currentUserEmail && d.auteur_email && d.auteur_email===currentUserEmail) || isAdmin;
+      const del = canDel ? '<button class="der-del" title="Supprimer" onclick="deleteDerang(\''+d.id+'\')">🗑️</button>' : '';
+      let body='';
+      if(d.audio_path){
+        body='<div class="der-player" data-path="'+escHtml(d.audio_path)+'" data-dur="'+(d.audio_duree||0)+'">'
+           + '<button type="button" class="der-play" onclick="derListPlay(this)">▶</button>'
+           + '<div class="der-prog" onclick="derListSeek(event,this)"><div class="der-prog-fill"></div></div>'
+           + '<span class="der-time">'+fmtClock(d.audio_duree||0)+'</span></div>';
+      } else if(d.description){
+        body='<div class="der-desc">'+escHtml(d.description)+'</div>';
+      }
+      return '<div class="der-card">'
+        + '<div class="der-head"><span class="der-cat">⚠️ '+escHtml(d.categorie||'—')+'</span>'+lieu+del+'</div>'
+        + '<div class="der-when"><b>'+escHtml(per)+'</b>'+(dur?(' · durée '+escHtml(dur)):'')+'</div>'
+        + body
+        + (d.prenom?('<div class="der-by">👤 '+escHtml(d.prenom)+'</div>'):'')
+        + '</div>';
+    }).join('');
+  }
+  async function deleteDerang(id){
+    const d=derangData.find(x=>x.id===id); if(!d) return;
+    const canDel=(currentUserEmail && d.auteur_email && d.auteur_email===currentUserEmail) || isAdmin;
+    if(!canDel){ return; }
+    if(!confirm('Supprimer ce dérangement ? Cette action est définitive.')) return;
+    if(!supaOk) return;
+    try{
+      if(d.audio_path){ try{ await supa.storage.from(DER_BUCKET).remove([d.audio_path]); }catch(e){ console.error(e); } }
+      const { error } = await supa.from('derangements').delete().eq('id', id);
+      if(error) throw error;
+      await loadDerangements();
+    }catch(e){ console.error(e); alert('Suppression impossible pour le moment. Réessayez.'); }
+  }
+  // --- lecture audio dans la liste (URL signée à la demande) ---
+  function _derStopNow(){ if(_derNow){ try{ _derNow.pause(); }catch(e){} } if(_derNowBtn){ _derNowBtn.textContent='▶'; } _derNow=null; _derNowBtn=null; }
+  async function derListPlay(btn){
+    const player=btn.closest('.der-player'); if(!player) return;
+    // si déjà chargé sur ce lecteur → toggle
+    if(_derNowBtn===btn && _derNow){ if(_derNow.paused){ _derNow.play(); btn.textContent='⏸'; } else { _derNow.pause(); btn.textContent='▶'; } return; }
+    _derStopNow();
+    const path=player.getAttribute('data-path'); const dur=+(player.getAttribute('data-dur')||0);
+    const fill=player.querySelector('.der-prog-fill'); const time=player.querySelector('.der-time');
+    if(!supaOk){ return; }
+    btn.classList.add('loading'); btn.textContent='…';
+    try{
+      const { data, error } = await supa.storage.from(DER_BUCKET).createSignedUrl(path, 3600);
+      if(error||!data) throw (error||new Error('url'));
+      const a=new Audio(data.signedUrl);
+      a.ontimeupdate=()=>{ const d=dur||a.duration||1; fill.style.width=Math.min(100,(a.currentTime/d)*100)+'%'; time.textContent=fmtClock(Math.max(0,d-a.currentTime)); };
+      a.onended=()=>{ btn.textContent='▶'; fill.style.width='0%'; time.textContent=fmtClock(dur); _derNow=null; _derNowBtn=null; };
+      a.onpause=()=>{ if(!a.ended) btn.textContent='▶'; };
+      a.onplay=()=>{ btn.textContent='⏸'; };
+      _derNow=a; _derNowBtn=btn; a._dur=dur; a._fill=fill;
+      await a.play();
+    }catch(e){ console.error(e); _msgDer(''); btn.textContent='▶'; }
+    btn.classList.remove('loading');
+  }
+  function derListSeek(ev,bar){
+    const a=_derNow, player=bar.closest('.der-player');
+    if(!a || !player || _derNowBtn!==player.querySelector('.der-play')) return;
+    const r=bar.getBoundingClientRect(); const ratio=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
+    const d=a._dur||a.duration||0; if(d){ a.currentTime=ratio*d; }
   }
   function hideGate(){
     var g=document.getElementById('authGate'); if(g) g.style.display='none';
