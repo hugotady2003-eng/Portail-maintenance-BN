@@ -835,6 +835,27 @@
   @keyframes derBar{0%,100%{height:8px}50%{height:30px}}
   .der-rec-stop{width:100%;border:1px solid var(--carmillon);background:#fff;color:var(--carmillon);border-radius:11px;padding:11px;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;}
   .der-rec-redo{width:100%;margin-top:9px;border:1px solid var(--gris-bord);background:#fff;color:var(--texte2);border-radius:10px;padding:9px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .der-rec-actions{display:flex;gap:8px;margin-top:9px;}
+  .der-rec-actions .der-rec-redo{margin-top:0;flex:1;}
+  .der-rec-dl{flex:1;border:1px solid #0b8043;background:#e7f6ee;color:#0b8043;border-radius:10px;padding:9px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .der-rec-dl:hover{background:#d6efe1;}
+  .der-dl{flex-shrink:0;width:32px;height:32px;border-radius:8px;border:1px solid var(--gris-bord);background:#fff;color:#0b8043;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
+  .der-dl:hover{background:#e7f6ee;}
+  /* photos : sélection + miniatures */
+  .der-img-add{width:100%;border:1px dashed var(--gris-bord);background:#fbfbfd;color:var(--texte2);border-radius:11px;padding:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .der-img-add:hover{border-color:var(--carmillon);color:var(--carmillon);}
+  .der-img-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .der-img-thumbs:empty{margin-top:0;}
+  .der-thumb-box{position:relative;width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--gris-bord);}
+  .der-thumb-box img{width:100%;height:100%;object-fit:cover;display:block;}
+  .der-thumb-x{position:absolute;top:2px;right:2px;width:19px;height:19px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .der-imgs{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+  .der-imgs img{width:62px;height:62px;object-fit:cover;border-radius:8px;border:1px solid var(--gris-bord);cursor:pointer;background:#f0f1f4;}
+  /* visionneuse plein écran */
+  .der-lightbox{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px;}
+  .der-lightbox.on{display:flex;}
+  .der-lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
+  .der-lightbox-x{position:absolute;top:14px;right:16px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:22px;cursor:pointer;}
   /* lecteur audio (aperçu + liste) */
   .der-player{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--gris-bord);border-radius:11px;padding:9px 12px;}
   .der-play{flex-shrink:0;width:38px;height:38px;border-radius:50%;border:none;background:linear-gradient(135deg,#c30067,#800064);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(195,0,103,.3);-webkit-tap-highlight-color:transparent;}
@@ -851,8 +872,8 @@
   .der-when b{color:var(--anthracite);}
   .der-desc{font-size:13px;color:var(--texte);line-height:1.5;white-space:pre-wrap;}
   .der-by{margin-top:9px;font-size:11px;font-weight:700;color:var(--violet-vin);}
-  .der-filter-wrap{padding:2px 16px 6px;}
-  .der-filter-wrap .rap-input{width:100%;box-sizing:border-box;}
+  .der-filter-wrap{padding:2px 16px 6px;display:flex;gap:8px;}
+  .der-filter-wrap .rap-input{width:100%;box-sizing:border-box;flex:1;min-width:0;font-size:12.5px;padding:9px 10px;}
   .der-head{position:relative;}
   .der-del{margin-left:auto;background:none;border:none;color:var(--gris-clair);font-size:15px;cursor:pointer;padding:3px 5px;border-radius:6px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;}
   .der-del:hover{color:#b42318;background:rgba(180,35,24,.08);}
@@ -1218,7 +1239,7 @@
     </div>
     <div id="ast-derang" class="ast-panel">
       <div class="rap-toolbar"><button class="rap-create" onclick="openDerangModal()">＋ Signaler un dérangement</button></div>
-      <div class="der-filter-wrap"><select id="derFilter" class="rap-input" onchange="renderDerangements()"><option value="">Toutes les catégories</option></select></div>
+      <div class="der-filter-wrap"><select id="derFilter" class="rap-input" onchange="renderDerangements()"><option value="">Toutes les catégories</option></select><select id="derFilterLieu" class="rap-input" onchange="renderDerangements()"><option value="">Tous les lieux</option></select></div>
       <div class="rap-list" id="derangList"><div class="acc-empty">Chargement…</div></div>
     </div>
   </div>
@@ -1305,6 +1326,12 @@
     </div>
   </div>
 
+  <!-- Visionneuse photo plein écran -->
+  <div id="derLightbox" class="der-lightbox" onclick="derCloseLightbox()">
+    <button class="der-lightbox-x" onclick="derCloseLightbox()">✕</button>
+    <img id="derLightboxImg" src="" alt="">
+  </div>
+
 
   <!-- ============ RAPPELS EN GARE ============ -->
   <div id="rappels" class="screen">
@@ -1375,13 +1402,10 @@
       <input id="derDebut" class="rap-input" type="datetime-local">
       <label class="rap-lbl">Fin</label>
       <input id="derFin" class="rap-input" type="datetime-local">
-      <label class="rap-lbl">Compte rendu</label>
-      <div class="der-mode">
-        <button type="button" class="der-mode-btn active" id="derModeTxt" onclick="derSetMode('texte')">✍️ Écrit</button>
-        <button type="button" class="der-mode-btn" id="derModeVoc" onclick="derSetMode('vocal')">🎙️ Vocal</button>
-      </div>
+      <label class="rap-lbl">Compte rendu écrit <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
       <textarea id="derTexte" class="rap-input rap-textarea" placeholder="Décrivez ce qu'il s'est passé…" maxlength="1000"></textarea>
-      <div id="derVocal" class="der-vocal" style="display:none;">
+      <label class="rap-lbl">Message vocal <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
+      <div id="derVocal" class="der-vocal">
         <!-- état repos -->
         <div id="derRecIdle" class="der-rec-idle">
           <button type="button" class="der-rec-start" onclick="derStartRec()"><span class="der-mic">🎙️</span> Démarrer l'enregistrement</button>
@@ -1400,8 +1424,17 @@
             <div class="der-prog" id="derPvProgWrap"><div class="der-prog-fill" id="derPvFill"></div></div>
             <span class="der-time" id="derPvTime">0:00</span>
           </div>
-          <button type="button" class="der-rec-redo" onclick="derResetRec()">↺ Recommencer</button>
+          <div class="der-rec-actions">
+            <button type="button" class="der-rec-dl" onclick="derDownloadPreview()">⬇️ Télécharger</button>
+            <button type="button" class="der-rec-redo" onclick="derResetRec()">↺ Recommencer</button>
+          </div>
         </div>
+      </div>
+      <label class="rap-lbl">Photos <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
+      <div class="der-img-wrap">
+        <input id="derImgInput" type="file" accept="image/*" multiple style="display:none" onchange="derPickImages(event)">
+        <button type="button" class="der-img-add" onclick="document.getElementById('derImgInput').click()">📷 Ajouter des photos</button>
+        <div id="derImgThumbs" class="der-img-thumbs"></div>
       </div>
       <div id="derMsg" class="rap-msg"></div>
       <div class="pt-modal-btns">
@@ -3198,9 +3231,47 @@
     document.getElementById('derFin').value=nowLocalInput(0);
     _msgDer('');
     derResetRec();
-    derSetMode('texte');
+    _derImgs=[]; renderDerImgThumbs();
+    const fi=document.getElementById('derImgInput'); if(fi) fi.value='';
     document.getElementById('derangModal').style.display='flex';
   }
+  // --- photos : compression + sélection ---
+  let _derImgs=[];
+  function compressImage(file, maxDim, quality){
+    maxDim=maxDim||1280; quality=quality||0.7;
+    return new Promise((resolve)=>{
+      const img=new Image();
+      img.onload=function(){
+        let w=img.width, h=img.height;
+        if(w>h && w>maxDim){ h=Math.round(h*maxDim/w); w=maxDim; }
+        else if(h>=w && h>maxDim){ w=Math.round(w*maxDim/h); h=maxDim; }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        c.toBlob(function(blob){ resolve(blob||file); }, 'image/jpeg', quality);
+      };
+      img.onerror=function(){ resolve(file); };
+      img.src=URL.createObjectURL(file);
+    });
+  }
+  async function derPickImages(ev){
+    const files=[].slice.call(ev.target.files||[]);
+    for(const f of files){
+      if(_derImgs.length>=6){ _msgDer('6 photos maximum.','err'); break; }
+      if(!/^image\//.test(f.type)) continue;
+      const blob=await compressImage(f, 1280, 0.7);
+      _derImgs.push({ blob:blob, url:URL.createObjectURL(blob) });
+    }
+    ev.target.value='';
+    renderDerImgThumbs();
+  }
+  function renderDerImgThumbs(){
+    const box=document.getElementById('derImgThumbs'); if(!box) return;
+    box.innerHTML=_derImgs.map((im,i)=>'<div class="der-thumb-box"><img src="'+im.url+'"><button type="button" class="der-thumb-x" onclick="derRemoveImg('+i+')">×</button></div>').join('');
+  }
+  function derRemoveImg(i){ try{ URL.revokeObjectURL(_derImgs[i].url); }catch(e){} _derImgs.splice(i,1); renderDerImgThumbs(); }
+  // visionneuse
+  function derOpenImg(url){ const lb=document.getElementById('derLightbox'), im=document.getElementById('derLightboxImg'); if(im) im.src=url; if(lb) lb.classList.add('on'); }
+  function derCloseLightbox(){ const lb=document.getElementById('derLightbox'); if(lb) lb.classList.remove('on'); const im=document.getElementById('derLightboxImg'); if(im) im.src=''; }
   function closeDerangModal(){ derStopStream(); const m=document.getElementById('derangModal'); if(m) m.style.display='none'; }
   function _msgDer(t,k){ const m=document.getElementById('derMsg'); if(m){ m.textContent=t||''; m.className='rap-msg'+(k?(' '+k):''); } }
   function derCatChange(){
@@ -3237,8 +3308,10 @@
       _derStream=await navigator.mediaDevices.getUserMedia({audio:true});
     }catch(e){ console.error(e); _msgDer("Accès au micro refusé.",'err'); return; }
     _derChunks=[]; _derBlob=null; _derMime=_pickMime();
-    try{ _derRec = _derMime ? new MediaRecorder(_derStream,{mimeType:_derMime}) : new MediaRecorder(_derStream); }
-    catch(e){ _derRec = new MediaRecorder(_derStream); }
+    const opts = { audioBitsPerSecond: 24000 };
+    if(_derMime) opts.mimeType=_derMime;
+    try{ _derRec = new MediaRecorder(_derStream, opts); }
+    catch(e){ try{ _derRec = new MediaRecorder(_derStream,{mimeType:_derMime}); }catch(e2){ _derRec = new MediaRecorder(_derStream); } }
     _derMime=_derRec.mimeType||_derMime||'audio/webm';
     _derRec.ondataavailable=ev=>{ if(ev.data && ev.data.size) _derChunks.push(ev.data); };
     _derRec.onstop=()=>{
@@ -3290,13 +3363,12 @@
     const texte=(document.getElementById('derTexte').value||'').trim().slice(0,1000);
     if(!cat){ _msgDer('Choisissez une catégorie.','err'); return; }
     if(!debut){ _msgDer("Indiquez l'heure de début.",'err'); return; }
-    if(_derMode==='texte' && !texte){ _msgDer('Écrivez le compte rendu ou passez en vocal.','err'); return; }
-    if(_derMode==='vocal' && !_derBlob){ _msgDer('Enregistrez un message vocal.','err'); return; }
+    if(!texte && !_derBlob && !_derImgs.length){ _msgDer('Ajoutez un compte rendu écrit, un vocal et/ou une photo.','err'); return; }
     if(!supaOk){ _msgDer('Indisponible en mode aperçu.','err'); return; }
     _busy('derOkBtn',true);
     try{
-      let audio_path=null, audio_duree=null;
-      if(_derMode==='vocal' && _derBlob){
+      let audio_path=null, audio_duree=null, image_paths=null;
+      if(_derBlob){
         const ext = _derMime.includes('mp4')?'mp4':(_derMime.includes('ogg')?'ogg':'webm');
         const id = (window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(16).slice(2));
         audio_path = id+'.'+ext;
@@ -3304,11 +3376,22 @@
         if(up.error) throw up.error;
         audio_duree=_derDur;
       }
+      if(_derImgs.length){
+        image_paths=[];
+        for(const im of _derImgs){
+          const id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(16).slice(2));
+          const p='img/'+id+'.jpg';
+          const up=await supa.storage.from(DER_BUCKET).upload(p, im.blob, {contentType:'image/jpeg', upsert:false});
+          if(up.error) throw up.error;
+          image_paths.push(p);
+        }
+      }
       const row={ categorie:cat, lieu:lieu||null,
         debut: new Date(debut).toISOString(),
         fin: fin ? new Date(fin).toISOString() : null,
-        description: _derMode==='texte'?texte:null,
+        description: texte||null,
         audio_path:audio_path, audio_duree:audio_duree,
+        image_paths:image_paths,
         prenom:userPrenom()||null, auteur_email:currentUserEmail||null };
       const { error } = await supa.from('derangements').insert(row);
       if(error) throw error;
@@ -3317,6 +3400,16 @@
       _busy('derOkBtn',false);
       setTimeout(closeDerangModal, 500);
     }catch(e){ console.error(e); _msgDer("Échec de l'enregistrement. Réessayez.",'err'); _busy('derOkBtn',false); }
+  }
+  // télécharge le message vocal en cours d'enregistrement (pour l'envoyer par mail)
+  function derDownloadPreview(){
+    if(!_derBlob) return;
+    const ext = _derMime.includes('mp4')?'mp4':(_derMime.includes('ogg')?'ogg':'webm');
+    const url=URL.createObjectURL(_derBlob);
+    const a=document.createElement('a');
+    a.href=url; a.download='message-vocal-derangement.'+ext;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
   }
   // --- liste ---
   async function loadDerangements(){
@@ -3341,9 +3434,19 @@
       fsel.innerHTML='<option value="">Toutes les catégories</option>'+cats.map(c=>'<option value="'+escHtml(c)+'"'+(c===cur?' selected':'')+'>'+escHtml(c)+'</option>').join('');
     }
     const filter=fsel?fsel.value:'';
+    // filtre par lieu (gare ou BTS)
+    const lsel=document.getElementById('derFilterLieu');
+    if(lsel){
+      const lieux=[]; derangData.forEach(d=>{ if(d.lieu && lieux.indexOf(d.lieu)<0) lieux.push(d.lieu); });
+      lieux.sort((a,b)=>a.localeCompare(b,'fr'));
+      const curl=lsel.value;
+      lsel.innerHTML='<option value="">Tous les lieux</option>'+lieux.map(l=>'<option value="'+escHtml(l)+'"'+(l===curl?' selected':'')+'>'+(lieuIcon(l)==='📡'?'📡 ':'🚉 ')+escHtml(l)+'</option>').join('');
+    }
+    const filterLieu=lsel?lsel.value:'';
     let rows=derangData.slice();
     if(filter) rows=rows.filter(d=>d.categorie===filter);
-    if(!rows.length){ el.innerHTML='<div class="acc-empty">'+(filter?'Aucun dérangement dans cette catégorie.':'Aucun dérangement signalé. Touchez « Signaler un dérangement ».')+'</div>'; return; }
+    if(filterLieu) rows=rows.filter(d=>d.lieu===filterLieu);
+    if(!rows.length){ el.innerHTML='<div class="acc-empty">'+((filter||filterLieu)?'Aucun dérangement pour ce filtre.':'Aucun dérangement signalé. Touchez « Signaler un dérangement ».')+'</div>'; return; }
     el.innerHTML=rows.map(d=>{
       const per = fmtDateTimeFr(d.debut) + (d.fin?(' → '+fmtDateTimeFr(d.fin)):'') ;
       const dur = d.fin ? fmtDurationBetween(d.debut,d.fin) : '';
@@ -3351,13 +3454,18 @@
       const canDel = (currentUserEmail && d.auteur_email && d.auteur_email===currentUserEmail) || isAdmin;
       const del = canDel ? '<button class="der-del" title="Supprimer" onclick="deleteDerang(\''+d.id+'\')">🗑️</button>' : '';
       let body='';
+      if(d.description){
+        body+='<div class="der-desc">'+escHtml(d.description)+'</div>';
+      }
       if(d.audio_path){
-        body='<div class="der-player" data-path="'+escHtml(d.audio_path)+'" data-dur="'+(d.audio_duree||0)+'">'
+        const dl = canDel ? '<button type="button" class="der-dl" title="Télécharger" onclick="derListDownload(this)">⬇️</button>' : '';
+        body+='<div class="der-player" data-path="'+escHtml(d.audio_path)+'" data-dur="'+(d.audio_duree||0)+'" style="margin-top:'+(d.description?'9px':'0')+'">'
            + '<button type="button" class="der-play" onclick="derListPlay(this)">▶</button>'
            + '<div class="der-prog" onclick="derListSeek(event,this)"><div class="der-prog-fill"></div></div>'
-           + '<span class="der-time">'+fmtClock(d.audio_duree||0)+'</span></div>';
-      } else if(d.description){
-        body='<div class="der-desc">'+escHtml(d.description)+'</div>';
+           + '<span class="der-time">'+fmtClock(d.audio_duree||0)+'</span>'+dl+'</div>';
+      }
+      if(d.image_paths && d.image_paths.length){
+        body+='<div class="der-imgs">'+d.image_paths.map(p=>'<img data-imgpath="'+escHtml(p)+'" alt="photo" loading="lazy">').join('')+'</div>';
       }
       return '<div class="der-card">'
         + '<div class="der-head"><span class="der-cat">⚠️ '+escHtml(d.categorie||'—')+'</span>'+lieu+del+'</div>'
@@ -3366,6 +3474,17 @@
         + (d.prenom?('<div class="der-by">👤 '+escHtml(d.prenom)+'</div>'):'')
         + '</div>';
     }).join('');
+    derLoadThumbs();
+  }
+  async function derLoadThumbs(){
+    if(!supaOk) return;
+    const imgs=[].slice.call(document.querySelectorAll('#derangList img[data-imgpath]')).filter(im=>!im.src);
+    if(!imgs.length) return;
+    const paths=imgs.map(im=>im.getAttribute('data-imgpath'));
+    try{
+      const { data } = await supa.storage.from(DER_BUCKET).createSignedUrls(paths, 3600);
+      (data||[]).forEach((r,i)=>{ if(r && r.signedUrl){ imgs[i].src=r.signedUrl; imgs[i].onclick=function(){ derOpenImg(r.signedUrl); }; } });
+    }catch(e){ console.error(e); }
   }
   async function deleteDerang(id){
     const d=derangData.find(x=>x.id===id); if(!d) return;
@@ -3374,7 +3493,10 @@
     if(!confirm('Supprimer ce dérangement ? Cette action est définitive.')) return;
     if(!supaOk) return;
     try{
-      if(d.audio_path){ try{ await supa.storage.from(DER_BUCKET).remove([d.audio_path]); }catch(e){ console.error(e); } }
+      const paths=[];
+      if(d.audio_path) paths.push(d.audio_path);
+      if(d.image_paths && d.image_paths.length) d.image_paths.forEach(p=>paths.push(p));
+      if(paths.length){ try{ await supa.storage.from(DER_BUCKET).remove(paths); }catch(e){ console.error(e); } }
       const { error } = await supa.from('derangements').delete().eq('id', id);
       if(error) throw error;
       await loadDerangements();
@@ -3403,6 +3525,18 @@
       await a.play();
     }catch(e){ console.error(e); _msgDer(''); btn.textContent='▶'; }
     btn.classList.remove('loading');
+  }
+  async function derListDownload(btn){
+    const player=btn.closest('.der-player'); if(!player) return;
+    const path=player.getAttribute('data-path'); if(!path || !supaOk) return;
+    const old=btn.textContent; btn.textContent='…';
+    try{
+      const { data, error } = await supa.storage.from(DER_BUCKET).createSignedUrl(path, 120, { download:true });
+      if(error||!data) throw (error||new Error('url'));
+      const a=document.createElement('a'); a.href=data.signedUrl; a.download=path;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }catch(e){ console.error(e); alert('Téléchargement impossible pour le moment.'); }
+    btn.textContent=old;
   }
   function derListSeek(ev,bar){
     const a=_derNow, player=bar.closest('.der-player');
