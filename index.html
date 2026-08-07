@@ -1084,7 +1084,7 @@
       <div class="group-sillon" aria-hidden="true"><svg viewBox="0 0 400 80" preserveAspectRatio="xMaxYMin slice"><path d="M-10,68 C120,28 260,50 460,6"/><path d="M20,84 C150,48 300,64 480,20" style="animation-delay:.22s"/></svg></div>
       <div class="group-title"><span class="dot"></span>Applications métier</div>
       <div class="list" id="list-appmetier">
-        <a data-lk="monit-iv-supervision" class="row b-blue" href="https://monit-iv.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">📊</div><div class="tx"><div class="lbl">Monit-IV</div><div class="sub">Supervision</div></div><span class="ext">↗ EXTERNE</span></a>
+        <div class="row b-blue" onclick="go('supervision')"><div class="ic">📊</div><div class="tx"><div class="lbl">Supervision</div><div class="sub">Monit-IV · Centreon · OTU5000 · Artium</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <a data-lk="fusionlive-gestion-documentaire" class="row b-blue" href="https://uk.fusion.live/resources/jsps/pol/login/Logon.jsp" target="_blank" rel="noopener noreferrer"><div class="ic">🗂️</div><div class="tx"><div class="lbl">FusionLive</div><div class="sub">Gestion documentaire</div></div><span class="ext">↗ EXTERNE</span></a>
         <a data-lk="mgsmr-maintenance-gsm-r" class="row b-blue" href="https://mgsmr.sncf.fr/" target="_blank" rel="noopener noreferrer"><div class="ic">📡</div><div class="tx"><div class="lbl">MGSMR</div><div class="sub">Maintenance GSM-R</div></div><span class="ext">↗ EXTERNE</span></a>
         <a data-lk="vertigo-application-m-tier" class="row b-blue" href="https://vertigo.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">🧭</div><div class="tx"><div class="lbl">Vertigo</div><div class="sub">Application métier</div></div><span class="ext">↗ EXTERNE</span></a>
@@ -1246,15 +1246,7 @@
 
 
   <!-- ============ NOUVEAUTÉS / CHANGELOG ============ -->
-  <div id="changelog" class="screen">
-    <div class="pagehead ph-violet">
-      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
-      <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
-      <h2>Nouveautés</h2>
-      <p>Historique des mises à jour &amp; correctifs</p>
-    </div>
-    <div class="changelog" id="changelogList"></div>
-  </div>
+  <div id="changelog" class="screen" style="display:none"></div>
 
 
   <!-- ============ DEMANDES D'ACCÈS (ADMIN) ============ -->
@@ -1330,6 +1322,28 @@
   <div id="derLightbox" class="der-lightbox" onclick="derCloseLightbox()">
     <button class="der-lightbox-x" onclick="derCloseLightbox()">✕</button>
     <img id="derLightboxImg" src="" alt="">
+  </div>
+
+  <!-- ============ SUPERVISION ============ -->
+  <div id="supervision" class="screen">
+    <div class="pagehead ph-violet">
+      <div class="sillon-deco" aria-hidden="true"><svg viewBox="0 0 400 120" preserveAspectRatio="xMaxYMax slice"><path d="M-10,96 C140,58 270,40 460,18"/><path d="M30,118 C180,82 320,62 480,40" style="animation-delay:.28s"/></svg></div>
+      <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Accueil</button>
+      <h2>Supervision</h2>
+      <p>Outils de supervision réseau</p>
+    </div>
+    <div class="links" id="list-supervision" style="padding:16px;">
+      <a data-lk="sup-monitiv" class="lk" style="--accent:var(--bleu-acier)" href="https://monit-iv.sncf.fr" target="_blank" rel="noopener noreferrer"><div class="ic">📊</div><div class="lbl">Monit-IV</div><span class="go">↗</span></a>
+      <a data-lk="sup-centreon" class="lk" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer"><div class="ic">📡</div><div class="lbl">Centreon</div><span class="go">↗</span></a>
+      <div class="pop-wrap">
+        <a class="lk" style="--accent:var(--bleu-acier)" href="#" onclick="openCloud(event,this);return false;"><div class="ic">🔬</div><div class="lbl">OTU5000</div><span class="go">▾</span></a>
+        <div class="pop-cloud"><div class="pop-cloud-inner">
+          <a data-lk="sup-otu-lison" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer">Lison<span class="go">↗</span></a>
+          <a data-lk="sup-otu-lisieux" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer">Lisieux<span class="go">↗</span></a>
+        </div></div>
+      </div>
+      <a data-lk="sup-artium" class="lk" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer"><div class="ic">🖥️</div><div class="lbl">Artium</div><span class="go">↗</span></a>
+    </div>
   </div>
 
 
@@ -1621,13 +1635,15 @@
              + `<div class="pop-cloud"><div class="pop-cloud-inner">${subs}</div></div>`
              + `</div>`;
       }
-      const url=(key && d[key]) ? d[key] : null;
+      const ovUrl = _ovGet('maint:'+key+':'+d.n);
+      const url = (key && d[key]) ? d[key] : (ovUrl ? sanitizeUrl(ovUrl) : null);
       if(!url){
-        return `<div class="lk lk-soon" style="--accent:${accents[id]}"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go-soon">à venir</span></div>`;
+        return `<div class="lk lk-soon" data-lk="maint:${key}:${d.n}" style="--accent:${accents[id]}"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go-soon">à venir</span></div>`;
       }
       return `<a data-lk="maint:${key}:${d.n}" class="lk" style="--accent:${accents[id]}" href="${url}" target="_blank" rel="noopener noreferrer"><div class="ic">${d.e}</div><div class="lbl">${d.n}</div><span class="go">↗</span></a>`;
     }).join('');
   }
+  function _ovGet(k){ try{ return linkOverrides ? linkOverrides[k] : undefined; }catch(e){ return undefined; } }
   // ouvre/ferme la liste déroulante sous le bouton ; ferme les autres
   function openCloud(ev, el){
     ev.stopPropagation();
@@ -2893,7 +2909,7 @@
     selectCat(accesCats[0].id);
   }
 
-    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés',numartes:'Numéros Artes',adminreq:"Demandes d'accès",rappels:'Rappels',siteconfig:'Configuration'};
+    const titles={home:'Accueil',maintenance:'Maintenance / Docs',acces:'Accès',powerswitch:'Power-Switch',planning:'Planning',astreinte:'Astreinte / Code',changelog:'Nouveautés',numartes:'Numéros Artes',adminreq:"Demandes d'accès",rappels:'Rappels',siteconfig:'Configuration',supervision:'Supervision'};
   function go(id){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -2962,7 +2978,7 @@
       </div>`;
     }).join('');
   }
-  (function(){ var b=document.getElementById('verBadge'); if(b) b.textContent='v'+APP_VERSION+' · Nouveautés'; renderChangelog(); })();
+  /* écran Nouveautés retiré */
 
   function _v(id){ var el=document.getElementById(id); return el?el.value:''; }
   function _busy(id,on){ var b=document.getElementById(id); if(b){ b.disabled=on; b.dataset._t=b.dataset._t||b.textContent; b.textContent=on?'…':b.dataset._t; } }
@@ -3564,7 +3580,10 @@
     applySiteConfig();
   }
   function applySiteConfig(){
+    // reconstruit les onglets Maintenance (transforme « à venir » en lien quand une URL est définie)
+    try{ ['L-bn','L-fiches','L-appli'].forEach(build); }catch(e){}
     document.querySelectorAll('[data-lk]').forEach(el=>{
+      if(el.tagName!=='A') return; // les éléments « à venir » (div) ne reçoivent pas de href
       if(!el.hasAttribute('data-lk-default')) el.setAttribute('data-lk-default', el.getAttribute('href')||'');
       const k=el.getAttribute('data-lk'), def=el.getAttribute('data-lk-default');
       const u = linkOverrides[k]?sanitizeUrl(linkOverrides[k]):'';
