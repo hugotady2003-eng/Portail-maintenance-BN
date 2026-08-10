@@ -1343,6 +1343,8 @@
         </div></div>
       </div>
       <a data-lk="sup-artium" class="lk" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer"><div class="ic">🖥️</div><div class="lbl">Artium</div><span class="go">↗</span></a>
+      <a data-lk="sup-odin" class="lk" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer"><div class="ic">🛡️</div><div class="lbl">Odin</div><span class="go">↗</span></a>
+      <a data-lk="sup-monit-vertigo" class="lk" style="--accent:var(--bleu-acier)" href="#" target="_blank" rel="noopener noreferrer"><div class="ic">🧭</div><div class="lbl">Monit Vertigo</div><span class="go">↗</span></a>
     </div>
   </div>
 
@@ -3075,6 +3077,12 @@
     const totalCount=g=>(byGare[g.n]||[]).length;
     const activeCount=g=>(byGare[g.n]||[]).filter(r=>r.status!=='fait').length;
     if(rapShowWithOnly && !q) gares=gares.filter(g=>totalCount(g)>0);
+    // gares avec rappels actifs (pastille rouge) en haut ; celles entièrement terminées descendent
+    gares.sort((a,b)=>{
+      const aa=activeCount(a)>0?1:0, bb=activeCount(b)>0?1:0;
+      if(aa!==bb) return bb-aa;
+      return a.n.localeCompare(b.n,'fr');
+    });
     if(!gares.length){ el.innerHTML='<div class="acc-empty">'+(rapShowWithOnly&&!q?'Aucune gare avec rappel pour le moment. Touchez « Créer un rappel » pour en ajouter un.':'Aucune gare ne correspond à votre recherche.')+'</div>'; return; }
     el.innerHTML=gares.map(g=>{
       const items=(byGare[g.n]||[]).slice().sort((a,b)=>{ const af=a.status==='fait',bf=b.status==='fait'; return af===bf?0:(af?1:-1); });
