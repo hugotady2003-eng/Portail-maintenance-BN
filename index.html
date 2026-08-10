@@ -877,6 +877,8 @@
   .der-head{position:relative;}
   .der-del{margin-left:auto;background:none;border:none;color:var(--gris-clair);font-size:15px;cursor:pointer;padding:3px 5px;border-radius:6px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;}
   .der-del:hover{color:#b42318;background:rgba(180,35,24,.08);}
+  .der-edit-btn{background:none;border:none;color:var(--gris-clair);font-size:14px;cursor:pointer;padding:3px 4px;border-radius:6px;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s;}
+  .der-edit-btn:hover{color:var(--bleu-acier);background:rgba(38,79,196,.08);}
   /* ===== Écran Configuration (admin) ===== */
   .cfg-wrap{padding:14px 16px 30px;}
   .cfg-sect-title{font-size:13px;font-weight:800;color:var(--anthracite);margin:4px 0 8px;}
@@ -1403,7 +1405,7 @@
   <!-- Modal : signaler un dérangement d'astreinte -->
   <div id="derangModal" class="pt-modal" style="display:none;">
     <div class="pt-modal-card">
-      <div class="pt-modal-title">Signaler un dérangement</div>
+      <div class="pt-modal-title" id="derModalTitle">Signaler un dérangement</div>
       <label class="rap-lbl">Catégorie</label>
       <select id="derCat" class="rap-input" onchange="derCatChange()"></select>
       <input id="derCatAutre" class="rap-input" type="text" placeholder="Précisez la catégorie…" maxlength="60" style="display:none;margin-top:6px;">
@@ -1420,7 +1422,7 @@
       <input id="derFin" class="rap-input" type="datetime-local">
       <label class="rap-lbl">Compte rendu écrit <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
       <textarea id="derTexte" class="rap-input rap-textarea" placeholder="Décrivez ce qu'il s'est passé…" maxlength="1000"></textarea>
-      <label class="rap-lbl">Message vocal <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
+      <label class="rap-lbl der-media-lbl">Message vocal <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
       <div id="derVocal" class="der-vocal">
         <!-- état repos -->
         <div id="derRecIdle" class="der-rec-idle">
@@ -1446,7 +1448,7 @@
           </div>
         </div>
       </div>
-      <label class="rap-lbl">Photos <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
+      <label class="rap-lbl der-media-lbl">Photos <span style="font-weight:600;color:var(--gris-clair)">(facultatif)</span></label>
       <div class="der-img-wrap">
         <input id="derImgInput" type="file" accept="image/*" multiple style="display:none" onchange="derPickImages(event)">
         <button type="button" class="der-img-add" onclick="document.getElementById('derImgInput').click()">📷 Ajouter des photos</button>
@@ -3243,10 +3245,27 @@
   function fmtDurationBetween(a,b){ try{ const ms=new Date(b)-new Date(a); if(isNaN(ms)||ms<0) return ''; const min=Math.round(ms/60000); if(min<60) return min+' min'; const h=Math.floor(min/60), m=min%60; return h+' h'+(m?(' '+m):''); }catch(e){ return ''; } }
   function nowLocalInput(off){ const d=new Date(); if(off) d.setMinutes(d.getMinutes()+off); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
 
-  function openDerangModal(){
+  function isoToLocalInput(iso){ try{ const d=new Date(iso); if(isNaN(d.getTime())) return ''; d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }catch(e){ return ''; } }
+  let _derEditId=null;
+  function _derFillCatSelect(selected){
     const sel=document.getElementById('derCat');
-    const cats=(typeof domains!=='undefined'?domains.map(d=>d.n):[]).concat(['Autre']);
+    const names=(typeof domains!=='undefined'?domains.map(d=>d.n):[]);
+    const cats=names.concat(['Autre']);
     sel.innerHTML='<option value="">— Choisir —</option>'+cats.map(c=>'<option value="'+escHtml(c)+'">'+escHtml(c)+'</option>').join('');
+    if(selected!=null){
+      if(names.indexOf(selected)>=0){ sel.value=selected; document.getElementById('derCatAutre').style.display='none'; }
+      else { sel.value='Autre'; const a=document.getElementById('derCatAutre'); a.style.display='block'; a.value=selected; }
+    }
+  }
+  function openDerangModal(){
+    _derEditId=null;
+    document.getElementById('derModalTitle').textContent='Signaler un dérangement';
+    document.getElementById('derOkBtn').textContent='Enregistrer';
+    const voc=document.getElementById('derVocal'); if(voc) voc.style.display='';
+    const imgw=document.querySelector('.der-img-wrap'); if(imgw) imgw.style.display='';
+    // affiche les libellés vocal/photos
+    document.querySelectorAll('.der-media-lbl').forEach(el=>el.style.display='');
+    _derFillCatSelect(null);
     document.getElementById('derCatAutre').style.display='none';
     document.getElementById('derCatAutre').value='';
     document.getElementById('derLieuInput').value='';
@@ -3257,6 +3276,24 @@
     derResetRec();
     _derImgs=[]; renderDerImgThumbs();
     const fi=document.getElementById('derImgInput'); if(fi) fi.value='';
+    document.getElementById('derangModal').style.display='flex';
+  }
+  function openDerangEdit(id){
+    const d=derangData.find(x=>x.id===id); if(!d) return;
+    _derEditId=id;
+    document.getElementById('derModalTitle').textContent='Modifier le dérangement';
+    document.getElementById('derOkBtn').textContent='Enregistrer les modifications';
+    _derFillCatSelect(d.categorie||'');
+    document.getElementById('derLieuInput').value=d.lieu||'';
+    document.getElementById('derTexte').value=d.description||'';
+    document.getElementById('derDebut').value=isoToLocalInput(d.debut)||nowLocalInput(0);
+    document.getElementById('derFin').value=d.fin?isoToLocalInput(d.fin):'';
+    // en édition, on ne touche pas au vocal/photos existants : on masque ces sections
+    const voc=document.getElementById('derVocal'); if(voc) voc.style.display='none';
+    const imgw=document.querySelector('.der-img-wrap'); if(imgw) imgw.style.display='none';
+    document.querySelectorAll('.der-media-lbl').forEach(el=>el.style.display='none');
+    _derImgs=[]; renderDerImgThumbs(); derResetRec();
+    _msgDer('');
     document.getElementById('derangModal').style.display='flex';
   }
   // --- photos : compression + sélection ---
@@ -3322,10 +3359,12 @@
   }
   // --- enregistrement ---
   function _pickMime(){
-    const cands=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+    // on privilégie MP4/AAC (lisible partout, notamment iPhone), sinon repli WebM/Opus
+    const cands=['audio/mp4','audio/mp4;codecs=aac','audio/aac','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];
     if(window.MediaRecorder && MediaRecorder.isTypeSupported){ for(const c of cands){ if(MediaRecorder.isTypeSupported(c)) return c; } }
     return '';
   }
+  function _audioExt(mime){ mime=mime||''; if(mime.indexOf('mp4')>=0||mime.indexOf('aac')>=0) return 'm4a'; if(mime.indexOf('ogg')>=0) return 'ogg'; return 'webm'; }
   async function derStartRec(){
     if(!navigator.mediaDevices || !window.MediaRecorder){ _msgDer("L'enregistrement audio n'est pas supporté sur cet appareil.",'err'); return; }
     try{
@@ -3387,13 +3426,31 @@
     const texte=(document.getElementById('derTexte').value||'').trim().slice(0,1000);
     if(!cat){ _msgDer('Choisissez une catégorie.','err'); return; }
     if(!debut){ _msgDer("Indiquez l'heure de début.",'err'); return; }
-    if(!texte && !_derBlob && !_derImgs.length){ _msgDer('Ajoutez un compte rendu écrit, un vocal et/ou une photo.','err'); return; }
     if(!supaOk){ _msgDer('Indisponible en mode aperçu.','err'); return; }
+    // --- mode édition : mise à jour des champs (le vocal/photos existants sont conservés) ---
+    if(_derEditId){
+      _busy('derOkBtn',true);
+      try{
+        const upd={ categorie:cat, lieu:lieu||null,
+          debut:new Date(debut).toISOString(),
+          fin: fin ? new Date(fin).toISOString() : null,
+          description: texte||null };
+        const { error } = await supa.from('derangements').update(upd).eq('id',_derEditId);
+        if(error) throw error;
+        _msgDer('✓ Modifications enregistrées','ok');
+        await loadDerangements();
+        _busy('derOkBtn',false);
+        setTimeout(closeDerangModal, 500);
+      }catch(e){ console.error(e); _msgDer("Échec de la modification. Réessayez.",'err'); _busy('derOkBtn',false); }
+      return;
+    }
+    // --- mode création ---
+    if(!texte && !_derBlob && !_derImgs.length){ _msgDer('Ajoutez un compte rendu écrit, un vocal et/ou une photo.','err'); return; }
     _busy('derOkBtn',true);
     try{
       let audio_path=null, audio_duree=null, image_paths=null;
       if(_derBlob){
-        const ext = _derMime.includes('mp4')?'mp4':(_derMime.includes('ogg')?'ogg':'webm');
+        const ext = _audioExt(_derMime);
         const id = (window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.random().toString(16).slice(2));
         audio_path = id+'.'+ext;
         const up = await supa.storage.from(DER_BUCKET).upload(audio_path, _derBlob, {contentType:_derMime, upsert:false});
@@ -3428,7 +3485,7 @@
   // télécharge le message vocal en cours d'enregistrement (pour l'envoyer par mail)
   function derDownloadPreview(){
     if(!_derBlob) return;
-    const ext = _derMime.includes('mp4')?'mp4':(_derMime.includes('ogg')?'ogg':'webm');
+    const ext = _audioExt(_derMime);
     const url=URL.createObjectURL(_derBlob);
     const a=document.createElement('a');
     a.href=url; a.download='message-vocal-derangement.'+ext;
@@ -3476,13 +3533,14 @@
       const dur = d.fin ? fmtDurationBetween(d.debut,d.fin) : '';
       const lieu = d.lieu ? '<span class="der-lieu">📍 '+escHtml(d.lieu)+'</span>' : '';
       const canDel = (currentUserEmail && d.auteur_email && d.auteur_email===currentUserEmail) || isAdmin;
+      const edit = canDel ? '<button class="der-edit-btn" title="Modifier" onclick="openDerangEdit(\''+d.id+'\')">✏️</button>' : '';
       const del = canDel ? '<button class="der-del" title="Supprimer" onclick="deleteDerang(\''+d.id+'\')">🗑️</button>' : '';
       let body='';
       if(d.description){
         body+='<div class="der-desc">'+escHtml(d.description)+'</div>';
       }
       if(d.audio_path){
-        const dl = canDel ? '<button type="button" class="der-dl" title="Télécharger" onclick="derListDownload(this)">⬇️</button>' : '';
+        const dl = '<button type="button" class="der-dl" title="Télécharger" onclick="derListDownload(this)">⬇️</button>';
         body+='<div class="der-player" data-path="'+escHtml(d.audio_path)+'" data-dur="'+(d.audio_duree||0)+'" style="margin-top:'+(d.description?'9px':'0')+'">'
            + '<button type="button" class="der-play" onclick="derListPlay(this)">▶</button>'
            + '<div class="der-prog" onclick="derListSeek(event,this)"><div class="der-prog-fill"></div></div>'
@@ -3492,7 +3550,7 @@
         body+='<div class="der-imgs">'+d.image_paths.map(p=>'<img data-imgpath="'+escHtml(p)+'" alt="photo" loading="lazy">').join('')+'</div>';
       }
       return '<div class="der-card">'
-        + '<div class="der-head"><span class="der-cat">⚠️ '+escHtml(d.categorie||'—')+'</span>'+lieu+del+'</div>'
+        + '<div class="der-head"><span class="der-cat">⚠️ '+escHtml(d.categorie||'—')+'</span>'+lieu+edit+del+'</div>'
         + '<div class="der-when"><b>'+escHtml(per)+'</b>'+(dur?(' · durée '+escHtml(dur)):'')+'</div>'
         + body
         + (d.prenom?('<div class="der-by">👤 '+escHtml(d.prenom)+'</div>'):'')
