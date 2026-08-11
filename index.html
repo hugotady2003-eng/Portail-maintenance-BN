@@ -689,6 +689,7 @@
     -webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);
     box-shadow:0 6px 18px rgba(15,23,42,.1),inset 0 1px 0 rgba(255,255,255,.9);}
   .pk-search-row{display:flex;gap:8px;}
+  .pk-suggest{margin-top:8px;max-height:190px;overflow-y:auto;background:#fff;border:1px solid var(--gris-bord);border-radius:11px;box-shadow:0 8px 22px rgba(15,23,42,.14);-webkit-overflow-scrolling:touch;}
   .pk-in{flex:1;min-width:0;box-sizing:border-box;border:1px solid rgba(120,130,150,.3);border-radius:10px;
     padding:10px 12px;font-family:inherit;font-size:14px;font-weight:600;color:var(--anthracite);background:rgba(255,255,255,.75);outline:none;transition:border-color .15s,box-shadow .15s;}
   .pk-in:focus{border-color:var(--bleu);box-shadow:0 0 0 3px rgba(38,79,196,.14);}
@@ -1155,10 +1156,11 @@
     <!-- Recherche par ligne + PK -->
     <div class="pk-search" id="pkSearch">
       <div class="pk-search-row">
-        <input id="pkLine" class="pk-in pk-in-line" type="text" inputmode="numeric" placeholder="Ligne (ex. 395000)">
-        <input id="pkVal" class="pk-in pk-in-pk" type="text" inputmode="numeric" placeholder="PK (ex. 230+413)">
-        <button class="pk-go" onclick="searchByPk()">Aller</button>
+        <input id="pkLine" class="pk-in pk-in-line" type="text" inputmode="numeric" placeholder="Ligne (ex. 395000)" onkeydown="if(event.key==='Enter')doAccSearch()">
+        <input id="pkVal" class="pk-in pk-in-pk" type="text" inputmode="numeric" placeholder="PK (ex. 230+413)" oninput="accSearchSuggest()" onkeydown="if(event.key==='Enter')doAccSearch()" onblur="setTimeout(function(){var b=document.getElementById('pkSuggest');if(b)b.style.display='none';},170)">
+        <button class="pk-go" onclick="doAccSearch()">Aller</button>
       </div>
+      <div class="pk-suggest" id="pkSuggest" style="display:none;"></div>
       <div class="pk-hint" id="pkHint">Indiquez la ligne et le PK : le point d'accès le plus proche sur cette ligne sera localisé.</div>
     </div>
     <!-- Légende des particularités locales -->
@@ -2051,6 +2053,7 @@
   function selectCat(catId){
     currentCat = accesCats.find(x=>x.id===catId) || accesCats[0];
     document.querySelectorAll('#catSelector .map-tab').forEach(b=>b.classList.toggle('active', b.dataset.id===currentCat.id));
+    if(typeof configurePkSearch==='function') configurePkSearch();
     const regSel=document.getElementById('regionSelector');
     const localTog=document.getElementById('localToggle');
     // Réinitialise l'affichage segments
@@ -2376,6 +2379,70 @@
     if(m){ const v=pkToMeters(m[1]); if(v!=null) return v; }
     return null;
   }
+  // normalisation tolérante : ignore casse, espaces, accents et ponctuation
+  function normLoose(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  function accSearchSuggest(){
+    const box=document.getElementById('pkSuggest'); if(!box) return;
+    if(currentCat && currentCat.id==='voies'){ box.style.display='none'; box.innerHTML=''; return; }
+    const q=normLoose(document.getElementById('pkVal').value);
+    if(!q){ box.style.display='none'; box.innerHTML=''; return; }
+    const pts=(currentLine && currentLine.points)||[];
+    const cand=pts.map((p,i)=>({p,i})).filter(o=>normLoose(o.p.n).includes(q));
+    if(!cand.length){ box.style.display='none'; box.innerHTML=''; return; }
+    cand.sort((a,b)=>{ const as=normLoose(a.p.n).startsWith(q)?0:1,bs=normLoose(b.p.n).startsWith(q)?0:1; if(as!==bs)return as-bs; return a.p.n.length-b.p.n.length; });
+    const ic = (currentCat&&currentCat.id==='pn') ? '🚧 ' : '📡 ';
+    box.innerHTML=cand.slice(0,15).map(o=>'<div class="rap-auto-item" onmousedown="accPickSuggest('+o.i+')" ontouchstart="accPickSuggest('+o.i+')">'+ic+escHtml(o.p.n)+'</div>').join('');
+    box.style.display='block';
+  }
+  function accPickSuggest(idx){
+    const box=document.getElementById('pkSuggest'); if(box){ box.style.display='none'; box.innerHTML=''; }
+    const pts=(currentLine&&currentLine.points)||[]; const p=pts[idx];
+    if(p){
+      document.getElementById('pkVal').value=p.n;
+      focusPoint(idx);
+      const hint=document.getElementById('pkHint'); if(hint){ hint.textContent='Trouvé : « '+p.n+' »'; hint.className='pk-hint ok'; }
+    }
+  }
+  // La recherche s'adapte à la catégorie : PK pour Accès voies, nom pour GSM-R / PN
+  function doAccSearch(){
+    if(currentCat && currentCat.id==='voies') searchByPk();
+    else searchByName();
+  }
+  function configurePkSearch(){
+    const box=document.getElementById('pkSuggest'); if(box){ box.style.display='none'; box.innerHTML=''; }
+    const lineIn=document.getElementById('pkLine');
+    const valIn=document.getElementById('pkVal');
+    const hint=document.getElementById('pkHint');
+    const id = currentCat ? currentCat.id : '';
+    if(id==='voies'){
+      if(lineIn){ lineIn.style.display=''; lineIn.placeholder='Ligne (ex. 395000)'; }
+      if(valIn){ valIn.placeholder='PK (ex. 230+413)'; valIn.setAttribute('inputmode','numeric'); }
+      if(hint){ hint.textContent="Indiquez la ligne et le PK : le point d'accès le plus proche sera localisé."; hint.className='pk-hint'; }
+    } else {
+      if(lineIn) lineIn.style.display='none';
+      const isPn = id==='pn';
+      if(valIn){ valIn.placeholder = isPn ? 'Nom du PN (ex. PN 101)' : 'Nom de la BTS (ex. NOR CAEN)'; valIn.removeAttribute('inputmode'); }
+      if(hint){ hint.textContent = isPn ? 'Saisissez le nom du PN : il sera localisé sur la carte.' : 'Saisissez le nom de la BTS : elle sera localisée sur la carte.'; hint.className='pk-hint'; }
+    }
+  }
+  function searchByName(){
+    const hint=document.getElementById('pkHint');
+    const setHint=(t,k)=>{ hint.textContent=t; hint.className='pk-hint'+(k?(' '+k):''); };
+    const raw=(document.getElementById('pkVal').value||'').trim();
+    const q=normLoose(raw);
+    if(!q){ setHint('Saisissez un nom à rechercher.','err'); return; }
+    const pts=(currentLine && currentLine.points)||[];
+    if(!pts.length){ setHint('Aucun point sur cette ligne.','err'); return; }
+    const cand=pts.map((p,i)=>({p,i})).filter(o=>normLoose(o.p.n).includes(q));
+    if(!cand.length){ setHint('Aucun résultat pour « '+raw+' ».','err'); return; }
+    cand.sort((a,b)=>{
+      const as=normLoose(a.p.n).startsWith(q)?0:1, bs=normLoose(b.p.n).startsWith(q)?0:1;
+      if(as!==bs) return as-bs;
+      return a.p.n.length-b.p.n.length;
+    });
+    focusPoint(cand[0].i);
+    setHint('Trouvé : « '+cand[0].p.n+' »'+(cand.length>1?(' · +'+(cand.length-1)+' autre'+(cand.length>2?'s':'')):''),'ok');
+  }
   function searchByPk(){
     const hint=document.getElementById('pkHint');
     const setHint=(t,k)=>{ hint.textContent=t; hint.className='pk-hint'+(k?(' '+k):''); };
@@ -2607,6 +2674,7 @@
     }
     wrap.style.display='flex';
     var _pk=document.getElementById('pkSearch'); if(_pk) _pk.style.display = (currentLine&&currentLine.points&&currentLine.points.length) ? 'block' : 'none';
+    configurePkSearch();
     const sb=document.getElementById('sortBtn'); if(sb) sb.style.display = userLatLng ? 'inline-flex' : 'none';
     const q=(document.getElementById('accSearch').value||'').toLowerCase().trim();
     count.textContent=pts.filter(p=>p.n.toLowerCase().includes(q)).length+' / '+pts.length+' sites';
